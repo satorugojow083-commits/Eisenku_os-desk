@@ -12,12 +12,16 @@ NOVEDADES PRIME EN UNA FRASE
  - Tus datos tienen una segunda copia (espejo PRIME) y se sincronizan entre pestañas.
  - Transferir: lleva tu entorno a otro navegador, perfil, móvil, tableta o Xbox con código, QR, archivo o red local.
 
+GUÍA CON IMÁGENES
+ Abre GUIA_INSTALACION.pdf: instalación paso a paso en tu PC y en Netlify, con capturas.
+
 CÓMO ABRIRLO
  A) En tu PC (recomendado): instala Node.js 18 o superior (https://nodejs.org) y
     - Windows: doble clic en INICIAR.bat
     - macOS / Linux: sh INICIAR.sh
     Se abre http://127.0.0.1:8080 (deja abierta la ventana del servidor).
- B) Netlify: sube TODA la carpeta con Git o con la CLI (netlify.toml + netlify/functions).
+ B) Netlify: arrastra la carpeta a app.netlify.com/drop (sin proxy ni IA), o súbela con Git o
+    con la CLI para tener también el proxy y la IA (netlify.toml + netlify/functions).
  C) Cloudflare Pages: sube TODA la carpeta (con _worker.js en la raíz).
  No abras index.html con doble clic: ahí no existen el proxy, la IA ni el modo sin conexión.
  Guía completa: docs/DESPLIEGUE.md
