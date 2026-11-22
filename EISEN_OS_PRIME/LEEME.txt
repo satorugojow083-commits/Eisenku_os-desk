@@ -1,9 +1,16 @@
-EISENKU OS 10.0 NEXT GENERATION
-===============================
+EISEN OS PRIME 11.0  (eisen_osprime)
+====================================
 
 Plataforma de escritorio web con Linux Mode y Windows Mode, EISENKU App Center,
-navegador, archivos, 138 aplicaciones integradas (47 nuevas en 10.0), 28 juegos y el asistente
-Maestro Domingo. Conserva todo lo de 9.0 ENTERPRISE.
+navegador, archivos, 146 aplicaciones integradas (8 nuevas en PRIME), 28 juegos y el asistente
+Maestro Domingo. Conserva todo lo de 10.0 NEXT GENERATION y 9.0 ENTERPRISE y añade 205 funciones
+nuevas (lista en docs/PRIME.md o, dentro de EISEN, en Centro PRIME › Funciones PRIME).
+
+NOVEDADES PRIME EN UNA FRASE
+ - Si tu dispositivo no descarga archivos (Xbox, TV…), todo se descarga DENTRO de EISEN y se usa aquí.
+ - Al instalar una app aparece sola en el escritorio y en Inicio; las apps web se abren como mejor funcionan.
+ - Tus datos tienen una segunda copia (espejo PRIME) y se sincronizan entre pestañas.
+ - Transferir: lleva tu entorno a otro navegador, perfil, móvil, tableta o Xbox con código, QR, archivo o red local.
 
 CÓMO ABRIRLO
  A) En tu PC (recomendado): instala Node.js 18 o superior (https://nodejs.org) y
@@ -17,16 +24,20 @@ CÓMO ABRIRLO
 
 OPCIONES (al principio de INICIAR.bat / INICIAR.sh)
  PORT            puerto (8080; el proxy usa el siguiente)
- HOST=0.0.0.0    abrirlo desde la Xbox, una tableta u otro equipo de tu red (solo redes de confianza)
+ HOST=0.0.0.0    abrirlo desde la Xbox, una tableta u otro equipo de tu red (solo redes de confianza).
+                 Así funciona también «Transferir › Red local» (código de un solo uso, 10 minutos).
  AI_API_KEY      activa la IA de Domingo (API compatible con OpenAI). La clave nunca llega al navegador.
  AI_BASE_URL, AI_MODEL, AI_ACCESS_CODE, AI_RATE_PER_MIN, AI_DAILY_LIMIT  (ver docs/DESPLIEGUE.md)
 
 SI ALGO FALLA
  - "El puerto ya está en uso": EISENKU ya está abierto en otra ventana, o usa otro PORT.
- - La interfaz no arranca bien: abre http://127.0.0.1:8080/?safe=1 (modo seguro).
+ - La interfaz no arranca bien: abre http://127.0.0.1:8080/?safe=1 (modo seguro) o
+   http://127.0.0.1:8080/recovery.html (copia de todo, reparar, restablecer la interfaz).
+ - Si EISEN falla 4 veces seguidas al arrancar, se abre solo en modo seguro.
  - Más ayuda: EISENKU OS Handbook (F1 dentro de EISENKU) o docs/HANDBOOK.md.
 
 DOCUMENTACIÓN (carpeta docs/)
+ PRIME.md         EISEN OS PRIME 11.0: novedades, errores corregidos, pruebas, límites y las 205 funciones
  INFORME_TECNICO_10.md  informe de la versión 10.0: implementado, parcial, no soportado,
                         errores conocidos, rendimiento y seguridad
  AUDITORIA_10.md  auditoría previa y mapa de las 100 funciones
@@ -39,8 +50,9 @@ DOCUMENTACIÓN (carpeta docs/)
  PRUEBAS.md       pruebas realizadas y resultados
 
 TUS DATOS
- Todo se guarda en este navegador (localStorage e IndexedDB). EISENKU no tiene cuentas en la nube
- ni envía estadísticas. Haz copias en Configuración › Copias de seguridad.
+ Todo se guarda en este navegador (localStorage e IndexedDB, con una segunda copia «espejo PRIME»).
+ EISEN no tiene cuentas en la nube ni envía estadísticas. Haz copias en Configuración › Copias de
+ seguridad o lleva tu entorno a otro dispositivo con la app «Transferir y sincronizar».
  Tus datos de las versiones 8.0 y 9.0 se conservan al pasar a 10.0 (se crea un punto de restauración).
 
 PARA DESARROLLADORES

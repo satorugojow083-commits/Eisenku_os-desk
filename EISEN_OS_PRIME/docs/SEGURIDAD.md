@@ -94,3 +94,17 @@ Se mantienen todas las medidas anteriores. Para lo nuevo:
 | Service worker | Caché `eisenku-10.0.0`; las peticiones de prueba de velocidad no se guardan. |
 
 Riesgos que permanecen: los mismos de la sección 4 (CSP con `'unsafe-inline'`, datos locales legibles con las herramientas del navegador, `HOST=0.0.0.0` sin HTTPS).
+
+
+## EISEN OS PRIME 11.0 · Seguridad añadida
+
+- **Enlaces externos aislados**: todo enlace que abre otra pestaña lleva `noopener noreferrer`; los enlaces `javascript:` se bloquean; `window.open` rechaza `javascript:` y `data:text/html`.
+- **JSON seguro**: todo lo importado (entornos, listas de apps, plugins) se lee sin `__proto__`, `constructor` ni `prototype`.
+- **Pegado seguro**: el HTML pegado en editores enriquecidos con scripts, marcos o atributos `on*` pasa por el saneador.
+- **Paquetes de entorno**: validación de claves (`eisen_*`), tamaños (40 MB de datos, 5 000 archivos), rutas de carpetas sin `..`, suma de control SHA-256 y cifrado **AES-GCM 256** con PBKDF2 (150 000 iteraciones) opcional. Los secretos (claves de servicios, bóveda de contraseñas) no se exportan salvo petición expresa.
+- **Plugins**: solo contenido declarativo validado (colores `#rrggbb`, degradados CSS sin `url()`, enlaces `https`, acciones de una lista cerrada). Los widgets con código se ejecutan en `iframe sandbox="allow-scripts"` (sin mismo origen) con CSP `default-src 'none'`, sin red. Se desactivan en modo seguro.
+- **Descargas**: huella SHA-256, aviso de programas (`.exe`, `.apk`, `.bat`…) que nunca se abren solos, y HTML descargado mostrado **sin scripts** por defecto.
+- **Pestañas obsoletas**: si otra pestaña cambia de perfil, esta deja de escribir datos (evita mezclar perfiles).
+- **Relé de red local**: cifrado extremo a extremo en el navegador; un solo uso; 10 minutos; límite de tamaño y de peticiones; cabecera obligatoria contra CSRF.
+- **Proxy**: el proxy propio se usa antes que los públicos (las direcciones que visitas ya no se envían a terceros si el propio funciona).
+- **Informe de errores** sin datos personales (sin nombres de archivos, direcciones ni contenido).

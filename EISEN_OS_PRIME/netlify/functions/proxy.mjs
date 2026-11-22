@@ -9,7 +9,7 @@ import dns from 'node:dns';
 // Los archivos de Cloudflare/Netlify se GENERAN con `node tools/build-edge.mjs` (no editarlos a mano).
 // =====================================================================
 
-const EISENKU_SERVER_VERSION = '10.0.0';
+const EISENKU_SERVER_VERSION = '11.0.0';
 
 // ---------- Política de seguridad de contenido de la app ----------
 // Notas honestas (ver docs/SEGURIDAD.md):

@@ -114,3 +114,12 @@ Para publicar una versión nueva, cambia también `version.json` y `EISENKU_SERV
 | La comprobación de integridad dice «No disponible» | Estás en `file://` o falta `integrity.json` (ejecuta `node tools/build-integrity.mjs`). |
 | Archivos modificados en Integridad | La copia publicada no coincide con `integrity.json`: vuelve a subir la carpeta completa o regenera el manifiesto si los cambios son tuyos. |
 | Pantalla en blanco o bloqueos al arrancar | Recarga con Ctrl+F5. Si persiste, abre la dirección con `?safe=1` al final (por ejemplo `http://127.0.0.1:8080/?safe=1`): es el **modo seguro**, sin apps de inicio ni ventanas restauradas. También está en *Herramientas de mantenimiento*. |
+
+
+## EISEN OS PRIME 11.0
+
+- **Servidor local (`INICIAR.bat` / `INICIAR.sh`)**: incluye el **relé de transferencia** (`/relay`) para «Transferir › Red local». Con `HOST=0.0.0.0`, abre EISEN en la Xbox, el móvil o la tableta con la IP del PC (`http://192.168.x.x:8080`) y recibe tu entorno con el código de 12 caracteres. El relé guarda el paquete **cifrado en el navegador**, en memoria, 10 minutos y para una sola lectura (máx. 8 MB, 200 paquetes). Exige la cabecera `x-eisen-relay` para que otras webs no puedan usarlo.
+- **Netlify y Cloudflare Pages**: todo PRIME funciona salvo la red local (se oculta). Vuelve a ejecutar `node tools/build-edge.mjs` si cambias `lib/*.mjs`.
+- **GitHub Pages u otro alojamiento estático**: sube la carpeta completa. Funcionan las apps, el espejo, la transferencia por código/QR/archivo y las descargas de sitios que permiten CORS; no hay proxy, IA del servidor ni red local.
+- **Instalar como app (PWA)**: con HTTPS, el navegador ofrece instalar EISEN; en Android aparece además en «Compartir» (los archivos compartidos llegan a Descargas). Atajos del icono: Descargas, Transferir, Centro PRIME y Lanzador TV.
+- Tras editar archivos de la web: `node tools/build-integrity.mjs`.

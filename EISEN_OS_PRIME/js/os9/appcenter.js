@@ -156,7 +156,7 @@
   let view = 'home', arg = null, q = '', cat = 'all', hist = [];
   const pool = () => list.filter(a => a.id !== 'appcenter' && a.id !== 'deskfolder');
   const catLabel = a => a.pkg ? 'Google Play' : a.game ? tr('Juego') + (a.gcat ? ' · ' + tr(a.gcat) : '') : tr((E.CATS[a.cat] || {}).label || a.cat || '');
-  const kind = a => a.pkg ? 'Android' : a.user ? tr('Añadida por ti') : (E.REG[a.id] || {}).thirdParty ? tr('Paquete de terceros') : a.game ? tr('Juego integrado') : a.web ? tr('App web') : K.MANIFESTS[a.id] ? tr('App 9.0') : tr('App integrada');
+  const kind = a => a.pkg ? 'Android' : a.user ? tr('Añadida por ti') : (E.REG[a.id] || {}).thirdParty ? tr('Paquete de terceros') : a.game ? tr('Juego integrado') : a.web ? tr('App web') : K.MANIFESTS[a.id] ? (K.MANIFESTS[a.id].v11 ? tr('App PRIME') : K.MANIFESTS[a.id].v10 ? tr('App 10.0') : tr('App 9.0')) : tr('App integrada');
   const isFav = id => favs().includes(id);
   const actions = (a, big) => {
     if (a.pkg) return `<button class="k9-btn pri" data-play="${esc(a.pkg)}">${esc(tr('Ver en Google Play'))} ↗</button>${a.web ? `<button class="k9-btn" data-playweb="${esc(a.id)}">${esc(tr('Abrir versión web'))}</button><button class="k9-btn" data-playadd="${esc(a.id)}">＋ ${esc(tr('Añadir a EISENKU'))}</button>` : ''}`;

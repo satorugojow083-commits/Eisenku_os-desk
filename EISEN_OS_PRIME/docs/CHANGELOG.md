@@ -1,4 +1,14 @@
-# EISENKU OS · Registro de cambios
+# EISENKU OS · EISEN OS PRIME · Registro de cambios
+
+## 11.0.0 PRIME · `eisen_osprime` (2026-11-22)
+- **205 funciones nuevas** en 20 áreas (lista completa en `docs/PRIME.md` y en Centro PRIME › Funciones PRIME).
+- **Descargas dentro de EISEN** para dispositivos que no descargan (Xbox, TV, navegadores dentro de apps): detección automática, gestor de descargas con visores, reproductor, editor de imágenes, SHA-256, aviso de archivos peligrosos e instalación de paquetes.
+- **Instalación integrada**: escritorio + Inicio automáticos, registro real de apps, instalación virtual de apps web según el dispositivo, paquetes, instalación múltiple, WhatsApp Hub.
+- **Persistencia**: espejo IndexedDB con reparación y recuperación, sincronización en vivo entre pestañas, protección de perfil, deshacer cambios, punto de restauración diario.
+- **Transferir**: código, QR animado en varias partes, archivo `.eisenenv` cifrado, red local de un solo uso, copia a otro perfil y fusión sin duplicados.
+- **Táctil, tabletas y Xbox**: gestos de borde, pulsación larga, teclado virtual, pantalla dividida, kiosco, cursor virtual con el mando, vibración, ayuda de botones, Lanzador TV y configuración automática.
+- **Nuevas apps**: Centro PRIME, Descargas, Transferir y sincronizar, WhatsApp Hub, Plugins, Estudio PRIME, Automatización, Lanzador TV. Página `recovery.html`.
+- **Corregidos** 11 errores (ver `docs/PRIME.md` §2), entre ellos la tienda partida en móviles, el arrastre táctil de ventanas, la recarga al tirar hacia abajo y la mezcla de datos entre pestañas.
 
 ## 10.0.0 NEXT GENERATION — 12 de noviembre de 2026
 
