@@ -1,0 +1,15 @@
+{
+  "name": "eisen-osprime",
+  "version": "11.0.0",
+  "description": "EISEN OS PRIME 11.0 (eisen_osprime): escritorio web con App Center, descargas dentro de EISEN, transferencia entre dispositivos, navegador, archivos y juegos.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "EISEN_CLOUD=1 node server.mjs",
+    "local": "node server.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED"
+}

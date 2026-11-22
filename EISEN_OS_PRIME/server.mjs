@@ -18,7 +18,10 @@ import { createAi } from './lib/ai-core.mjs';
 
 const dir = path.dirname(fileURLToPath(import.meta.url));
 const PORT = +process.env.PORT || 8080;
-const HOST = process.env.HOST || '127.0.0.1';
+// PRIME 11: EISEN_CLOUD=1 (lo pone «npm start») = alojamiento en la nube con un solo puerto público:
+// escucha en todas las interfaces y el proxy usa el mismo origen (con iframes aislados) en vez de PORT+1.
+const CLOUD = process.env.EISEN_CLOUD === '1';
+const HOST = process.env.HOST || (CLOUD ? '0.0.0.0' : '127.0.0.1');
 const TYPES = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.json': 'application/json; charset=utf-8', '.webmanifest': 'application/manifest+json', '.txt': 'text/plain; charset=utf-8', '.md': 'text/markdown; charset=utf-8',
@@ -98,7 +101,7 @@ function serveStatic(req, res, u) {
 // ---------- PRIME 11: relé de transferencia para la red local ----------
 // Guarda en memoria, durante 10 minutos y para UNA sola lectura, un paquete que el navegador ya cifró (AES-GCM).
 // El servidor nunca ve la clave: forma parte del código que el usuario lleva al otro dispositivo (Xbox, móvil, tableta).
-const RELAY = new Map(), RELAY_TTL = 10 * 60000, RELAY_MAX = 8 * 1024 * 1024, relayHits = new Map();
+const RELAY = new Map(), RELAY_TTL = 10 * 60000, RELAY_MAX = 8 * 1024 * 1024, RELAY_TOTAL = 64 * 1024 * 1024, relayHits = new Map();
 const RELAY_ALPHA = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 async function relay(req, res, u) {
   const t = Date.now(); for (const [k, v] of RELAY) if (t - v.at > RELAY_TTL) RELAY.delete(k);
@@ -108,7 +111,8 @@ async function relay(req, res, u) {
   if (req.method === 'GET' && u.pathname === '/relay/ping') return json(200, { ok: true, ttl: RELAY_TTL / 1000, max: RELAY_MAX });
   if (req.method === 'POST' && u.pathname === '/relay') {
     if (req.headers['x-eisen-relay'] !== '1') return json(403, { error: 'Petición no permitida' });   // obliga a un preflight CORS: otra web no puede usar el relé
-    if (RELAY.size >= 200) return json(503, { error: 'El relé está lleno: inténtalo en unos minutos' });
+    const used = [...RELAY.values()].reduce((n, x) => n + x.body.length, 0);
+    if (RELAY.size >= 200 || used > RELAY_TOTAL) return json(503, { error: 'El relé está lleno: inténtalo en unos minutos' });
     const chunks = []; let size = 0;
     for await (const c of req) { size += c.length; if (size > RELAY_MAX) { req.destroy(); return json(413, { error: 'Demasiado grande (máx. 8 MB)' }); } chunks.push(c); }
     const body = Buffer.concat(chunks); if (body.length < 16 || body.slice(0, 4).toString('latin1') !== 'EENV') return json(400, { error: 'Paquete no válido' });
@@ -138,7 +142,7 @@ http.createServer(async (req, res) => {
     if (u.pathname === '/ai') return await send(res, await ai(toRequest(req), process.env, { ip: ipOf(req) }));
     if (u.pathname === '/proxy' || u.pathname.startsWith('/p/')) {
       const hn = host.replace(/:\d+$/, '') || '127.0.0.1';
-      return await send(res, await proxyMain(toRequest(req), { ip: ipOf(req), ping: { alt: `http://${hn}:${PORT + 1}/proxy?url=`, server: 'node', version: EISENKU_SERVER_VERSION } }));
+      return await send(res, await proxyMain(toRequest(req), { ip: ipOf(req), ping: Object.assign(CLOUD ? {} : { alt: `http://${hn}:${PORT + 1}/proxy?url=` }, { server: 'node', version: EISENKU_SERVER_VERSION }) }));
     }
     if (u.pathname === '/relay' || u.pathname.startsWith('/relay/')) return await relay(req, res, u);
     if (u.pathname === '/version.json') { res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' }); return res.end(JSON.stringify({ version: EISENKU_SERVER_VERSION, edition: 'PRIME' })); }
@@ -149,11 +153,12 @@ http.createServer(async (req, res) => {
   const shown = HOST === '0.0.0.0' || HOST === '::' ? 'localhost' : HOST;
   console.log(`\n  EISEN OS PRIME 11.0 listo en  http://${shown}:${PORT}`);
   console.log(`  Asistente IA: ${process.env.AI_API_KEY ? 'activado (' + (process.env.AI_MODEL || 'modelo por defecto') + ')' + (process.env.AI_ACCESS_CODE ? ' · con código de acceso' : '') : 'modo local (define AI_API_KEY para activar la IA)'}`);
-  if (HOST === '0.0.0.0' || HOST === '::') console.log('  AVISO: visible para otros dispositivos de tu red (HOST=' + HOST + '). Úsalo solo en redes de confianza.');
+  if (CLOUD) console.log('  Modo nube (EISEN_CLOUD=1): un solo puerto público, proxy en el mismo origen.');
+  else if (HOST === '0.0.0.0' || HOST === '::') console.log('  AVISO: visible para otros dispositivos de tu red (HOST=' + HOST + '). Úsalo solo en redes de confianza.');
   console.log('  (deja esta ventana abierta mientras lo uses)\n');
 });
 
-http.createServer(async (req, res) => {
+if (!CLOUD) http.createServer(async (req, res) => {
   try { const r = await proxyAlt(toRequest(req), { ip: ipOf(req) }); if (r) return await send(res, r); res.writeHead(404); res.end(); }
   catch (e) { secLog('proxy.error', { msg: String(e && e.message || e).slice(0, 200) }); if (!res.headersSent) res.writeHead(500); res.end(); }
 }).on('error', e => portError(e, PORT + 1)).listen(PORT + 1, HOST);
