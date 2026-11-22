@@ -1,0 +1,25 @@
+# EISENKU OS 9.0 ENTERPRISE · Cabeceras de seguridad (Netlify y Cloudflare Pages sin _worker.js)
+# Generado desde lib/security.mjs. Con _worker.js (Cloudflare), el propio worker añade estas cabeceras.
+/
+  Content-Security-Policy: default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https: blob:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: http: data: blob:; media-src 'self' https: http: data: blob: mediastream:; font-src 'self' https: data:; connect-src 'self' https: http: wss: data: blob:; frame-src 'self' https: http: data: blob: about:; worker-src 'self' blob:; object-src 'none'; form-action 'self' https: http:; frame-ancestors 'self'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: browsing-topics=(), interest-cohort=()
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+/index.html
+  Content-Security-Policy: default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https: blob:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: http: data: blob:; media-src 'self' https: http: data: blob: mediastream:; font-src 'self' https: data:; connect-src 'self' https: http: wss: data: blob:; frame-src 'self' https: http: data: blob: about:; worker-src 'self' blob:; object-src 'none'; form-action 'self' https: http:; frame-ancestors 'self'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: browsing-topics=(), interest-cohort=()
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+/js/*
+  X-Content-Type-Options: nosniff
+  Cache-Control: no-cache
+/css/*
+  X-Content-Type-Options: nosniff
+  Cache-Control: no-cache
+/docs/*
+  X-Content-Type-Options: nosniff
+  Cache-Control: no-cache

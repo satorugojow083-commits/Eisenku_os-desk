@@ -1,0 +1,173 @@
+# EISENKU OS 9.0 · Traducciones centrales (fuente única). Una fila por texto; columnas separadas por |
+# Orden: es|en|pt|fr|de|it|ja|ko|zh|zh-TW|ru|ar|hi|nl|tr|pl|uk|id|sv|ca
+# Tras editar, ejecuta:  node tools/build-i18n.mjs   (genera js/os9/i18n/<idioma>.js)
+Aceptar|OK|OK|OK|OK|OK|OK|확인|确定|確定|ОК|موافق|ठीक है|OK|Tamam|OK|OK|OK|OK|D'acord
+Cancelar|Cancel|Cancelar|Annuler|Abbrechen|Annulla|キャンセル|취소|取消|取消|Отмена|إلغاء|रद्द करें|Annuleren|İptal|Anuluj|Скасувати|Batal|Avbryt|Cancel·la
+Guardar|Save|Salvar|Enregistrer|Speichern|Salva|保存|저장|保存|儲存|Сохранить|حفظ|सहेजें|Opslaan|Kaydet|Zapisz|Зберегти|Simpan|Spara|Desa
+Abrir|Open|Abrir|Ouvrir|Öffnen|Apri|開く|열기|打开|開啟|Открыть|فتح|खोलें|Openen|Aç|Otwórz|Відкрити|Buka|Öppna|Obre
+Cerrar|Close|Fechar|Fermer|Schließen|Chiudi|閉じる|닫기|关闭|關閉|Закрыть|إغلاق|बंद करें|Sluiten|Kapat|Zamknij|Закрити|Tutup|Stäng|Tanca
+Eliminar|Delete|Excluir|Supprimer|Löschen|Elimina|削除|삭제|删除|刪除|Удалить|حذف|हटाएँ|Verwijderen|Sil|Usuń|Видалити|Hapus|Ta bort|Elimina
+Editar|Edit|Editar|Modifier|Bearbeiten|Modifica|編集|편집|编辑|編輯|Изменить|تعديل|संपादित करें|Bewerken|Düzenle|Edytuj|Редагувати|Edit|Redigera|Edita
+Añadir|Add|Adicionar|Ajouter|Hinzufügen|Aggiungi|追加|추가|添加|新增|Добавить|إضافة|जोड़ें|Toevoegen|Ekle|Dodaj|Додати|Tambah|Lägg till|Afegeix
+Nuevo|New|Novo|Nouveau|Neu|Nuovo|新規|새로 만들기|新建|新增|Создать|جديد|नया|Nieuw|Yeni|Nowy|Створити|Baru|Ny|Nou
+Buscar|Search|Pesquisar|Rechercher|Suchen|Cerca|検索|검색|搜索|搜尋|Поиск|بحث|खोजें|Zoeken|Ara|Szukaj|Пошук|Cari|Sök|Cerca
+Buscar…|Search…|Pesquisar…|Rechercher…|Suchen…|Cerca…|検索…|검색…|搜索…|搜尋…|Поиск…|بحث…|खोजें…|Zoeken…|Ara…|Szukaj…|Пошук…|Cari…|Sök…|Cerca…
+Copiar|Copy|Copiar|Copier|Kopieren|Copia|コピー|복사|复制|複製|Копировать|نسخ|कॉपी करें|Kopiëren|Kopyala|Kopiuj|Копіювати|Salin|Kopiera|Copia
+Pegar|Paste|Colar|Coller|Einfügen|Incolla|貼り付け|붙여넣기|粘贴|貼上|Вставить|لصق|पेस्ट करें|Plakken|Yapıştır|Wklej|Вставити|Tempel|Klistra in|Enganxa
+Renombrar|Rename|Renomear|Renommer|Umbenennen|Rinomina|名前の変更|이름 바꾸기|重命名|重新命名|Переименовать|إعادة تسمية|नाम बदलें|Naam wijzigen|Yeniden adlandır|Zmień nazwę|Перейменувати|Ganti nama|Byt namn|Canvia el nom
+Mover|Move|Mover|Déplacer|Verschieben|Sposta|移動|이동|移动|移動|Переместить|نقل|ले जाएँ|Verplaatsen|Taşı|Przenieś|Перемістити|Pindahkan|Flytta|Mou
+Importar|Import|Importar|Importer|Importieren|Importa|インポート|가져오기|导入|匯入|Импорт|استيراد|आयात करें|Importeren|İçe aktar|Importuj|Імпорт|Impor|Importera|Importa
+Restaurar|Restore|Restaurar|Restaurer|Wiederherstellen|Ripristina|復元|복원|恢复|還原|Восстановить|استعادة|पुनर्स्थापित करें|Herstellen|Geri yükle|Przywróć|Відновити|Pulihkan|Återställ|Restaura
+Restablecer|Reset|Redefinir|Réinitialiser|Zurücksetzen|Reimposta|リセット|재설정|重置|重設|Сбросить|إعادة ضبط|रीसेट करें|Opnieuw instellen|Sıfırla|Resetuj|Скинути|Atur ulang|Återställ|Restableix
+Reintentar|Retry|Tentar novamente|Réessayer|Erneut versuchen|Riprova|再試行|다시 시도|重试|重試|Повторить|إعادة المحاولة|फिर से कोशिश करें|Opnieuw proberen|Yeniden dene|Ponów|Повторити|Coba lagi|Försök igen|Torna-ho a provar
+Atrás|Back|Voltar|Retour|Zurück|Indietro|戻る|뒤로|返回|返回|Назад|رجوع|पीछे|Terug|Geri|Wstecz|Назад|Kembali|Tillbaka|Enrere
+Adelante|Forward|Avançar|Suivant|Vorwärts|Avanti|進む|앞으로|前进|前進|Вперёд|تقدم|आगे|Vooruit|İleri|Dalej|Вперед|Maju|Framåt|Endavant
+Siguiente|Next|Próximo|Suivant|Weiter|Avanti|次へ|다음|下一步|下一步|Далее|التالي|अगला|Volgende|İleri|Dalej|Далі|Berikutnya|Nästa|Següent
+Continuar|Continue|Continuar|Continuer|Fortfahren|Continua|続ける|계속|继续|繼續|Продолжить|متابعة|जारी रखें|Doorgaan|Devam|Kontynuuj|Продовжити|Lanjutkan|Fortsätt|Continua
+Omitir|Skip|Pular|Passer|Überspringen|Salta|スキップ|건너뛰기|跳过|略過|Пропустить|تخطي|छोड़ें|Overslaan|Atla|Pomiń|Пропустити|Lewati|Hoppa över|Omet
+Salir|Exit|Sair|Quitter|Beenden|Esci|終了|나가기|退出|結束|Выйти|خروج|बाहर निकलें|Afsluiten|Çık|Wyjdź|Вийти|Keluar|Avsluta|Surt
+Terminar|Finish|Concluir|Terminer|Fertig|Fine|完了|완료|完成|完成|Готово|إنهاء|समाप्त करें|Voltooien|Bitir|Zakończ|Завершити|Selesai|Slutför|Acaba
+Entendido|Got it|Entendi|Compris|Verstanden|Ho capito|了解|확인했습니다|知道了|知道了|Понятно|فهمت|समझ गया|Begrepen|Anladım|Rozumiem|Зрозуміло|Mengerti|Uppfattat|Entesos
+Sí|Yes|Sim|Oui|Ja|Sì|はい|예|是|是|Да|نعم|हाँ|Ja|Evet|Tak|Так|Ya|Ja|Sí
+No|No|Não|Non|Nein|No|いいえ|아니요|否|否|Нет|لا|नहीं|Nee|Hayır|Nie|Ні|Tidak|Nej|No
+Hoy|Today|Hoje|Aujourd'hui|Heute|Oggi|今日|오늘|今天|今天|Сегодня|اليوم|आज|Vandaag|Bugün|Dziś|Сьогодні|Hari ini|Idag|Avui
+Mañana|Tomorrow|Amanhã|Demain|Morgen|Domani|明日|내일|明天|明天|Завтра|غدًا|कल|Morgen|Yarın|Jutro|Завтра|Besok|Imorgon|Demà
+Cargando…|Loading…|Carregando…|Chargement…|Wird geladen…|Caricamento…|読み込み中…|로드 중…|正在加载…|載入中…|Загрузка…|جارٍ التحميل…|लोड हो रहा है…|Laden…|Yükleniyor…|Ładowanie…|Завантаження…|Memuat…|Läser in…|S'està carregant…
+Algo salió mal|Something went wrong|Algo deu errado|Un problème est survenu|Etwas ist schiefgelaufen|Qualcosa è andato storto|問題が発生しました|문제가 발생했습니다|出了点问题|發生錯誤|Что-то пошло не так|حدث خطأ ما|कुछ गलत हो गया|Er ging iets mis|Bir şeyler ters gitti|Coś poszło nie tak|Щось пішло не так|Terjadi kesalahan|Något gick fel|Alguna cosa ha anat malament
+Sin resultados|No results|Nenhum resultado|Aucun résultat|Keine Ergebnisse|Nessun risultato|結果なし|결과 없음|无结果|沒有結果|Нет результатов|لا توجد نتائج|कोई परिणाम नहीं|Geen resultaten|Sonuç yok|Brak wyników|Немає результатів|Tidak ada hasil|Inga resultat|Sense resultats
+Instalar|Install|Instalar|Installer|Installieren|Installa|インストール|설치|安装|安裝|Установить|تثبيت|इंस्टॉल करें|Installeren|Yükle|Zainstaluj|Встановити|Pasang|Installera|Instal·la
+Desinstalar|Uninstall|Desinstalar|Désinstaller|Deinstallieren|Disinstalla|アンインストール|제거|卸载|解除安裝|Удалить|إلغاء التثبيت|अनइंस्टॉल करें|Verwijderen|Kaldır|Odinstaluj|Видалити|Copot|Avinstallera|Desinstal·la
+Actualizar|Update|Atualizar|Mettre à jour|Aktualisieren|Aggiorna|更新|업데이트|更新|更新|Обновить|تحديث|अपडेट करें|Bijwerken|Güncelle|Aktualizuj|Оновити|Perbarui|Uppdatera|Actualitza
+Actualizar todo|Update all|Atualizar tudo|Tout mettre à jour|Alle aktualisieren|Aggiorna tutto|すべて更新|모두 업데이트|全部更新|全部更新|Обновить все|تحديث الكل|सभी अपडेट करें|Alles bijwerken|Tümünü güncelle|Aktualizuj wszystko|Оновити все|Perbarui semua|Uppdatera alla|Actualitza-ho tot
+Instalada|Installed|Instalado|Installée|Installiert|Installata|インストール済み|설치됨|已安装|已安裝|Установлено|مثبت|इंस्टॉल है|Geïnstalleerd|Yüklü|Zainstalowana|Встановлено|Terpasang|Installerad|Instal·lada
+Instaladas|Installed|Instalados|Installées|Installiert|Installate|インストール済み|설치됨|已安装|已安裝|Установленные|المثبتة|इंस्टॉल किए गए|Geïnstalleerd|Yüklü|Zainstalowane|Встановлені|Terpasang|Installerade|Instal·lades
+Permisos|Permissions|Permissões|Autorisations|Berechtigungen|Autorizzazioni|権限|권한|权限|權限|Разрешения|الأذونات|अनुमतियाँ|Machtigingen|İzinler|Uprawnienia|Дозволи|Izin|Behörigheter|Permisos
+Versión|Version|Versão|Version|Version|Versione|バージョン|버전|版本|版本|Версия|الإصدار|संस्करण|Versie|Sürüm|Wersja|Версія|Versi|Version|Versió
+Detalles|Details|Detalhes|Détails|Details|Dettagli|詳細|세부 정보|详细信息|詳細資料|Подробности|التفاصيل|विवरण|Details|Ayrıntılar|Szczegóły|Подробиці|Detail|Detaljer|Detalls
+Descripción|Description|Descrição|Description|Beschreibung|Descrizione|説明|설명|描述|描述|Описание|الوصف|विवरण|Beschrijving|Açıklama|Opis|Опис|Deskripsi|Beskrivning|Descripció
+Categoría|Category|Categoria|Catégorie|Kategorie|Categoria|カテゴリ|범주|类别|類別|Категория|الفئة|श्रेणी|Categorie|Kategori|Kategoria|Категорія|Kategori|Kategori|Categoria
+Estado|Status|Status|État|Status|Stato|状態|상태|状态|狀態|Состояние|الحالة|स्थिति|Status|Durum|Stan|Стан|Status|Status|Estat
+Error|Error|Erro|Erreur|Fehler|Errore|エラー|오류|错误|錯誤|Ошибка|خطأ|त्रुटि|Fout|Hata|Błąd|Помилка|Kesalahan|Fel|Error
+Guardado|Saved|Salvo|Enregistré|Gespeichert|Salvato|保存しました|저장됨|已保存|已儲存|Сохранено|تم الحفظ|सहेजा गया|Opgeslagen|Kaydedildi|Zapisano|Збережено|Tersimpan|Sparat|Desat
+Copiado al portapapeles|Copied to clipboard|Copiado para a área de transferência|Copié dans le presse-papiers|In die Zwischenablage kopiert|Copiato negli appunti|クリップボードにコピーしました|클립보드에 복사됨|已复制到剪贴板|已複製到剪貼簿|Скопировано в буфер обмена|تم النسخ إلى الحافظة|क्लिपबोर्ड पर कॉपी किया गया|Gekopieerd naar klembord|Panoya kopyalandı|Skopiowano do schowka|Скопійовано в буфер обміну|Disalin ke papan klip|Kopierat till urklipp|S'ha copiat al porta-retalls
+Nombre|Name|Nome|Nom|Name|Nome|名前|이름|名称|名稱|Имя|الاسم|नाम|Naam|Ad|Nazwa|Назва|Nama|Namn|Nom
+Tipo|Type|Tipo|Type|Typ|Tipo|種類|유형|类型|類型|Тип|النوع|प्रकार|Type|Tür|Typ|Тип|Jenis|Typ|Tipus
+Tamaño|Size|Tamanho|Taille|Größe|Dimensione|サイズ|크기|大小|大小|Размер|الحجم|आकार|Grootte|Boyut|Rozmiar|Розмір|Ukuran|Storlek|Mida
+Fecha|Date|Data|Date|Datum|Data|日付|날짜|日期|日期|Дата|التاريخ|तारीख|Datum|Tarih|Data|Дата|Tanggal|Datum|Data
+Modificado|Modified|Modificado|Modifié|Geändert|Modificato|更新日時|수정됨|修改时间|修改時間|Изменён|تاريخ التعديل|संशोधित|Gewijzigd|Değiştirilme|Zmodyfikowano|Змінено|Diubah|Ändrad|Modificat
+Creado|Created|Criado|Créé|Erstellt|Creato|作成日時|만든 날짜|创建时间|建立時間|Создан|تاريخ الإنشاء|बनाया गया|Gemaakt|Oluşturulma|Utworzono|Створено|Dibuat|Skapad|Creat
+Carpeta|Folder|Pasta|Dossier|Ordner|Cartella|フォルダー|폴더|文件夹|資料夾|Папка|مجلد|फ़ोल्डर|Map|Klasör|Folder|Папка|Folder|Mapp|Carpeta
+Nueva carpeta|New folder|Nova pasta|Nouveau dossier|Neuer Ordner|Nuova cartella|新しいフォルダー|새 폴더|新建文件夹|新增資料夾|Новая папка|مجلد جديد|नया फ़ोल्डर|Nieuwe map|Yeni klasör|Nowy folder|Нова папка|Folder baru|Ny mapp|Carpeta nova
+Nuevo archivo|New file|Novo arquivo|Nouveau fichier|Neue Datei|Nuovo file|新しいファイル|새 파일|新建文件|新增檔案|Новый файл|ملف جديد|नई फ़ाइल|Nieuw bestand|Yeni dosya|Nowy plik|Новий файл|Berkas baru|Ny fil|Fitxer nou
+Archivos|Files|Arquivos|Fichiers|Dateien|File|ファイル|파일|文件|檔案|Файлы|الملفات|फ़ाइलें|Bestanden|Dosyalar|Pliki|Файли|Berkas|Filer|Fitxers
+Este equipo|This device|Este dispositivo|Cet appareil|Dieses Gerät|Questo dispositivo|このデバイス|이 장치|此设备|此裝置|Это устройство|هذا الجهاز|यह डिवाइस|Dit apparaat|Bu cihaz|To urządzenie|Цей пристрій|Perangkat ini|Den här enheten|Aquest dispositiu
+Documentos|Documents|Documentos|Documents|Dokumente|Documenti|ドキュメント|문서|文档|文件|Документы|المستندات|दस्तावेज़|Documenten|Belgeler|Dokumenty|Документи|Dokumen|Dokument|Documents
+Imágenes|Pictures|Imagens|Images|Bilder|Immagini|画像|사진|图片|圖片|Изображения|الصور|चित्र|Afbeeldingen|Resimler|Obrazy|Зображення|Gambar|Bilder|Imatges
+Música|Music|Música|Musique|Musik|Musica|ミュージック|음악|音乐|音樂|Музыка|الموسيقى|संगीत|Muziek|Müzik|Muzyka|Музика|Musik|Musik|Música
+Vídeos|Videos|Vídeos|Vidéos|Videos|Video|ビデオ|동영상|视频|影片|Видео|الفيديوهات|वीडियो|Video's|Videolar|Wideo|Відео|Video|Videor|Vídeos
+Descargas|Downloads|Downloads|Téléchargements|Downloads|Download|ダウンロード|다운로드|下载|下載|Загрузки|التنزيلات|डाउनलोड|Downloads|İndirilenler|Pobrane|Завантаження|Unduhan|Hämtade filer|Baixades
+Papelera|Trash|Lixeira|Corbeille|Papierkorb|Cestino|ごみ箱|휴지통|回收站|資源回收筒|Корзина|سلة المحذوفات|रीसायकल बिन|Prullenbak|Çöp kutusu|Kosz|Кошик|Tempat sampah|Papperskorg|Paperera
+Vaciar papelera|Empty trash|Esvaziar lixeira|Vider la corbeille|Papierkorb leeren|Svuota cestino|ごみ箱を空にする|휴지통 비우기|清空回收站|清理資源回收筒|Очистить корзину|إفراغ السلة|बिन खाली करें|Prullenbak legen|Çöp kutusunu boşalt|Opróżnij kosz|Очистити кошик|Kosongkan sampah|Töm papperskorgen|Buida la paperera
+Favoritos|Favorites|Favoritos|Favoris|Favoriten|Preferiti|お気に入り|즐겨찾기|收藏|我的最愛|Избранное|المفضلة|पसंदीदा|Favorieten|Sık kullanılanlar|Ulubione|Обране|Favorit|Favoriter|Preferits
+Recientes|Recent|Recentes|Récents|Zuletzt verwendet|Recenti|最近使用|최근 항목|最近|最近|Недавние|الأخيرة|हाल के|Recent|Son kullanılanlar|Ostatnie|Нещодавні|Terbaru|Senaste|Recents
+Lugares|Places|Locais|Emplacements|Orte|Posizioni|場所|위치|位置|位置|Места|الأماكن|स्थान|Locaties|Konumlar|Miejsca|Місця|Lokasi|Platser|Llocs
+Cuadrícula|Grid|Grade|Grille|Raster|Griglia|グリッド|격자|网格|格狀|Сетка|شبكة|ग्रिड|Raster|Izgara|Siatka|Сітка|Kisi|Rutnät|Quadrícula
+Lista|List|Lista|Liste|Liste|Elenco|リスト|목록|列表|清單|Список|قائمة|सूची|Lijst|Liste|Lista|Список|Daftar|Lista|Llista
+Ordenar|Sort|Ordenar|Trier|Sortieren|Ordina|並べ替え|정렬|排序|排序|Сортировка|ترتيب|क्रमबद्ध करें|Sorteren|Sırala|Sortuj|Сортувати|Urutkan|Sortera|Ordena
+Abrir con|Open with|Abrir com|Ouvrir avec|Öffnen mit|Apri con|プログラムから開く|연결 프로그램|打开方式|開啟檔案|Открыть с помощью|فتح باستخدام|इसके साथ खोलें|Openen met|Birlikte aç|Otwórz za pomocą|Відкрити за допомогою|Buka dengan|Öppna med|Obre amb
+Escritorio|Desktop|Área de trabalho|Bureau|Desktop|Desktop|デスクトップ|바탕 화면|桌面|桌面|Рабочий стол|سطح المكتب|डेस्कटॉप|Bureaublad|Masaüstü|Pulpit|Робочий стіл|Desktop|Skrivbord|Escriptori
+Escritorios|Desktops|Áreas de trabalho|Bureaux|Desktops|Desktop|デスクトップ|데스크톱|桌面|桌面|Рабочие столы|أسطح المكتب|डेस्कटॉप|Bureaubladen|Masaüstleri|Pulpity|Робочі столи|Desktop|Skrivbord|Escriptoris
+Escritorios virtuales|Virtual desktops|Áreas de trabalho virtuais|Bureaux virtuels|Virtuelle Desktops|Desktop virtuali|仮想デスクトップ|가상 데스크톱|虚拟桌面|虛擬桌面|Виртуальные рабочие столы|أسطح مكتب افتراضية|वर्चुअल डेस्कटॉप|Virtuele bureaubladen|Sanal masaüstleri|Pulpity wirtualne|Віртуальні робочі столи|Desktop virtual|Virtuella skrivbord|Escriptoris virtuals
+Nuevo escritorio|New desktop|Nova área de trabalho|Nouveau bureau|Neuer Desktop|Nuovo desktop|新しいデスクトップ|새 데스크톱|新建桌面|新增桌面|Новый рабочий стол|سطح مكتب جديد|नया डेस्कटॉप|Nieuw bureaublad|Yeni masaüstü|Nowy pulpit|Новий робочий стіл|Desktop baru|Nytt skrivbord|Escriptori nou
+Widgets|Widgets|Widgets|Widgets|Widgets|Widget|ウィジェット|위젯|小组件|小工具|Виджеты|الأدوات|विजेट|Widgets|Widget'lar|Widżety|Віджети|Widget|Widgetar|Widgets
+Personalizar|Personalize|Personalizar|Personnaliser|Personalisieren|Personalizza|個人用設定|개인 설정|个性化|個人化|Персонализация|تخصيص|वैयक्तिकृत करें|Personaliseren|Kişiselleştir|Personalizuj|Персоналізувати|Personalisasi|Anpassa|Personalitza
+Personalizar…|Personalize…|Personalizar…|Personnaliser…|Personalisieren…|Personalizza…|個人用設定…|개인 설정…|个性化…|個人化…|Персонализация…|تخصيص…|वैयक्तिकृत करें…|Personaliseren…|Kişiselleştir…|Personalizuj…|Персоналізувати…|Personalisasi…|Anpassa…|Personalitza…
+Concentración|Focus|Foco|Concentration|Fokus|Concentrazione|集中|집중|专注|專注|Фокусировка|التركيز|फ़ोकस|Focus|Odak|Skupienie|Зосередження|Fokus|Fokus|Concentració
+Modo concentración|Focus mode|Modo foco|Mode concentration|Fokusmodus|Modalità concentrazione|集中モード|집중 모드|专注模式|專注模式|Режим фокусировки|وضع التركيز|फ़ोकस मोड|Focusmodus|Odak modu|Tryb skupienia|Режим зосередження|Mode fokus|Fokusläge|Mode concentració
+No molestar|Do not disturb|Não perturbe|Ne pas déranger|Nicht stören|Non disturbare|応答不可|방해 금지|勿扰|勿打擾|Не беспокоить|عدم الإزعاج|परेशान न करें|Niet storen|Rahatsız etmeyin|Nie przeszkadzać|Не турбувати|Jangan ganggu|Stör ej|No molestis
+Luz nocturna|Night light|Luz noturna|Éclairage nocturne|Nachtmodus|Luce notturna|夜間モード|야간 모드|夜间模式|夜間光線|Ночной свет|الضوء الليلي|नाइट लाइट|Nachtlampje|Gece ışığı|Światło nocne|Нічне світло|Lampu malam|Nattljus|Llum nocturna
+Centro de notificaciones|Notification center|Central de notificações|Centre de notifications|Benachrichtigungscenter|Centro notifiche|通知センター|알림 센터|通知中心|通知中心|Центр уведомлений|مركز الإشعارات|सूचना केंद्र|Meldingencentrum|Bildirim merkezi|Centrum powiadomień|Центр сповіщень|Pusat notifikasi|Aviseringscenter|Centre de notificacions
+Notificaciones|Notifications|Notificações|Notifications|Benachrichtigungen|Notifiche|通知|알림|通知|通知|Уведомления|الإشعارات|सूचनाएँ|Meldingen|Bildirimler|Powiadomienia|Сповіщення|Notifikasi|Aviseringar|Notificacions
+Borrar todo|Clear all|Limpar tudo|Tout effacer|Alle löschen|Cancella tutto|すべてクリア|모두 지우기|全部清除|全部清除|Очистить всё|مسح الكل|सब साफ़ करें|Alles wissen|Tümünü temizle|Wyczyść wszystko|Очистити все|Hapus semua|Rensa alla|Esborra-ho tot
+Sin eventos hoy|No events today|Nenhum evento hoje|Aucun événement aujourd'hui|Heute keine Termine|Nessun evento oggi|今日の予定はありません|오늘 일정 없음|今天没有日程|今天沒有活動|Сегодня нет событий|لا توجد أحداث اليوم|आज कोई ईवेंट नहीं|Vandaag geen afspraken|Bugün etkinlik yok|Brak wydarzeń dzisiaj|Сьогодні подій немає|Tidak ada acara hari ini|Inga händelser idag|Avui no hi ha esdeveniments
+Búsqueda global|Global search|Pesquisa global|Recherche globale|Globale Suche|Ricerca globale|グローバル検索|전체 검색|全局搜索|全域搜尋|Глобальный поиск|البحث الشامل|वैश्विक खोज|Globaal zoeken|Genel arama|Wyszukiwanie globalne|Глобальний пошук|Pencarian global|Global sökning|Cerca global
+Configuración|Settings|Configurações|Paramètres|Einstellungen|Impostazioni|設定|설정|设置|設定|Настройки|الإعدادات|सेटिंग्स|Instellingen|Ayarlar|Ustawienia|Налаштування|Pengaturan|Inställningar|Configuració
+Bloquear|Lock|Bloquear|Verrouiller|Sperren|Blocca|ロック|잠금|锁定|鎖定|Заблокировать|قفل|लॉक करें|Vergrendelen|Kilitle|Zablokuj|Заблокувати|Kunci|Lås|Bloca
+Pantalla bloqueada|Screen locked|Tela bloqueada|Écran verrouillé|Bildschirm gesperrt|Schermo bloccato|画面がロックされています|화면 잠김|屏幕已锁定|螢幕已鎖定|Экран заблокирован|الشاشة مقفلة|स्क्रीन लॉक है|Scherm vergrendeld|Ekran kilitli|Ekran zablokowany|Екран заблоковано|Layar terkunci|Skärmen är låst|Pantalla bloquejada
+Inicio de sesión|Sign in|Entrar|Connexion|Anmeldung|Accesso|サインイン|로그인|登录|登入|Вход|تسجيل الدخول|साइन इन|Aanmelden|Oturum açma|Logowanie|Вхід|Masuk|Inloggning|Inici de sessió
+Cambiar de usuario|Switch user|Trocar de usuário|Changer d'utilisateur|Benutzer wechseln|Cambia utente|ユーザーの切り替え|사용자 전환|切换用户|切換使用者|Сменить пользователя|تبديل المستخدم|उपयोगकर्ता बदलें|Gebruiker wisselen|Kullanıcı değiştir|Przełącz użytkownika|Змінити користувача|Ganti pengguna|Byt användare|Canvia d'usuari
+PIN incorrecto|Incorrect PIN|PIN incorreto|Code PIN incorrect|Falsche PIN|PIN errato|PIN が正しくありません|PIN이 올바르지 않습니다|PIN 错误|PIN 錯誤|Неверный PIN-код|رقم PIN غير صحيح|गलत पिन|Onjuiste pincode|Yanlış PIN|Nieprawidłowy PIN|Неправильний PIN-код|PIN salah|Fel PIN-kod|PIN incorrecte
+Desbloquear|Unlock|Desbloquear|Déverrouiller|Entsperren|Sblocca|ロック解除|잠금 해제|解锁|解除鎖定|Разблокировать|فتح القفل|अनलॉक करें|Ontgrendelen|Kilidi aç|Odblokuj|Розблокувати|Buka kunci|Lås upp|Desbloca
+Entrar|Sign in|Entrar|Entrer|Anmelden|Entra|サインイン|로그인|进入|進入|Войти|دخول|प्रवेश करें|Inloggen|Giriş|Zaloguj|Увійти|Masuk|Logga in|Entra
+Inicio|Home|Início|Accueil|Start|Home|ホーム|홈|首页|首頁|Главная|الرئيسية|होम|Start|Ana sayfa|Start|Головна|Beranda|Start|Inici
+Destacadas|Featured|Destaques|À la une|Empfohlen|In evidenza|おすすめ|추천|精选|精選|Рекомендуемые|المميزة|विशेष|Uitgelicht|Öne çıkanlar|Polecane|Рекомендовані|Unggulan|Utvalda|Destacades
+Juegos|Games|Jogos|Jeux|Spiele|Giochi|ゲーム|게임|游戏|遊戲|Игры|الألعاب|गेम|Games|Oyunlar|Gry|Ігри|Game|Spel|Jocs
+Productividad|Productivity|Produtividade|Productivité|Produktivität|Produttività|仕事効率化|생산성|效率|生產力|Продуктивность|الإنتاجية|उत्पादकता|Productiviteit|Verimlilik|Produktywność|Продуктивність|Produktivitas|Produktivitet|Productivitat
+Internet|Internet|Internet|Internet|Internet|Internet|インターネット|인터넷|互联网|網際網路|Интернет|الإنترنت|इंटरनेट|Internet|İnternet|Internet|Інтернет|Internet|Internet|Internet
+Multimedia|Multimedia|Multimídia|Multimédia|Multimedia|Multimedia|マルチメディア|멀티미디어|多媒体|多媒體|Мультимедиа|الوسائط المتعددة|मल्टीमीडिया|Multimedia|Multimedya|Multimedia|Мультимедіа|Multimedia|Multimedia|Multimèdia
+Desarrollo|Development|Desenvolvimento|Développement|Entwicklung|Sviluppo|開発|개발|开发|開發|Разработка|التطوير|विकास|Ontwikkeling|Geliştirme|Programowanie|Розробка|Pengembangan|Utveckling|Desenvolupament
+Sistema|System|Sistema|Système|System|Sistema|システム|시스템|系统|系統|Система|النظام|सिस्टम|Systeem|Sistem|System|Система|Sistem|System|Sistema
+Educación|Education|Educação|Éducation|Bildung|Istruzione|教育|교육|教育|教育|Образование|التعليم|शिक्षा|Onderwijs|Eğitim|Edukacja|Освіта|Pendidikan|Utbildning|Educació
+Creatividad|Creativity|Criatividade|Créativité|Kreativität|Creatività|クリエイティブ|창의성|创意|創意|Творчество|الإبداع|रचनात्मकता|Creativiteit|Yaratıcılık|Kreatywność|Творчість|Kreativitas|Kreativitet|Creativitat
+Aplicaciones|Apps|Aplicativos|Applications|Apps|App|アプリ|앱|应用|應用程式|Приложения|التطبيقات|ऐप्स|Apps|Uygulamalar|Aplikacje|Застосунки|Aplikasi|Appar|Aplicacions
+Actividades|Activities|Atividades|Activités|Aktivitäten|Attività|アクティビティ|현재 활동|活动|活動|Обзор|الأنشطة|गतिविधियाँ|Activiteiten|Etkinlikler|Podgląd|Огляд|Aktivitas|Aktiviteter|Activitats
+En línea|Online|On-line|En ligne|Online|Online|オンライン|온라인|在线|線上|В сети|متصل|ऑनलाइन|Online|Çevrimiçi|Online|У мережі|Daring|Online|En línia
+Sin conexión|Offline|Off-line|Hors ligne|Offline|Offline|オフライン|오프라인|离线|離線|Нет подключения|غير متصل|ऑफ़लाइन|Offline|Çevrimdışı|Offline|Немає з'єднання|Luring|Offline|Sense connexió
+Modo seguro|Safe mode|Modo de segurança|Mode sans échec|Abgesicherter Modus|Modalità provvisoria|セーフモード|안전 모드|安全模式|安全模式|Безопасный режим|الوضع الآمن|सुरक्षित मोड|Veilige modus|Güvenli mod|Tryb awaryjny|Безпечний режим|Mode aman|Felsäkert läge|Mode segur
+Navegación privada|Private browsing|Navegação privada|Navigation privée|Privates Surfen|Navigazione privata|プライベートブラウズ|비공개 브라우징|隐私浏览|私密瀏覽|Приватный просмотр|التصفح الخاص|निजी ब्राउज़िंग|Privénavigatie|Gizli gezinme|Przeglądanie prywatne|Приватний перегляд|Penjelajahan pribadi|Privat surfning|Navegació privada
+Reabrir pestaña cerrada|Reopen closed tab|Reabrir guia fechada|Rouvrir l'onglet fermé|Geschlossenen Tab wieder öffnen|Riapri scheda chiusa|閉じたタブを再度開く|닫은 탭 다시 열기|重新打开关闭的标签页|重新開啟已關閉的分頁|Открыть закрытую вкладку|إعادة فتح علامة التبويب المغلقة|बंद टैब फिर से खोलें|Gesloten tabblad heropenen|Kapatılan sekmeyi yeniden aç|Otwórz ponownie zamkniętą kartę|Відкрити закриту вкладку|Buka lagi tab yang ditutup|Öppna stängd flik igen|Torna a obrir la pestanya tancada
+Información del sitio|Site information|Informações do site|Informations sur le site|Website-Informationen|Informazioni sul sito|サイト情報|사이트 정보|网站信息|網站資訊|Сведения о сайте|معلومات الموقع|साइट की जानकारी|Site-informatie|Site bilgileri|Informacje o witrynie|Відомості про сайт|Info situs|Webbplatsinformation|Informació del lloc
+Permisos de este sitio|Permissions for this site|Permissões deste site|Autorisations de ce site|Berechtigungen dieser Website|Autorizzazioni del sito|このサイトの権限|이 사이트의 권한|此网站的权限|此網站的權限|Разрешения для сайта|أذونات هذا الموقع|इस साइट की अनुमतियाँ|Machtigingen voor deze site|Bu sitenin izinleri|Uprawnienia tej witryny|Дозволи цього сайту|Izin situs ini|Behörigheter för webbplatsen|Permisos d'aquest lloc
+Modo Linux|Linux Mode|Modo Linux|Mode Linux|Linux-Modus|Modalità Linux|Linux モード|Linux 모드|Linux 模式|Linux 模式|Режим Linux|وضع Linux|Linux मोड|Linux-modus|Linux modu|Tryb Linux|Режим Linux|Mode Linux|Linux-läge|Mode Linux
+Modo Windows|Windows Mode|Modo Windows|Mode Windows|Windows-Modus|Modalità Windows|Windows モード|Windows 모드|Windows 模式|Windows 模式|Режим Windows|وضع Windows|Windows मोड|Windows-modus|Windows modu|Tryb Windows|Режим Windows|Mode Windows|Windows-läge|Mode Windows
+Elige tu escritorio|Choose your desktop|Escolha sua área de trabalho|Choisissez votre bureau|Wähle deinen Desktop|Scegli il tuo desktop|デスクトップを選択|데스크톱 선택|选择桌面|選擇桌面|Выберите рабочий стол|اختر سطح المكتب|अपना डेस्कटॉप चुनें|Kies je bureaublad|Masaüstünüzü seçin|Wybierz pulpit|Виберіть робочий стіл|Pilih desktop Anda|Välj skrivbord|Tria l'escriptori
+Te damos la bienvenida a EISENKU OS|Welcome to EISENKU OS|Bem-vindo ao EISENKU OS|Bienvenue dans EISENKU OS|Willkommen bei EISENKU OS|Benvenuto in EISENKU OS|EISENKU OS へようこそ|EISENKU OS에 오신 것을 환영합니다|欢迎使用 EISENKU OS|歡迎使用 EISENKU OS|Добро пожаловать в EISENKU OS|مرحبًا بك في EISENKU OS|EISENKU OS में आपका स्वागत है|Welkom bij EISENKU OS|EISENKU OS'a hoş geldiniz|Witamy w EISENKU OS|Ласкаво просимо до EISENKU OS|Selamat datang di EISENKU OS|Välkommen till EISENKU OS|Et donem la benvinguda a EISENKU OS
+Idioma|Language|Idioma|Langue|Sprache|Lingua|言語|언어|语言|語言|Язык|اللغة|भाषा|Taal|Dil|Język|Мова|Bahasa|Språk|Idioma
+Aspecto|Appearance|Aparência|Apparence|Darstellung|Aspetto|外観|모양|外观|外觀|Внешний вид|المظهر|रूप|Weergave|Görünüm|Wygląd|Вигляд|Tampilan|Utseende|Aspecte
+Tu perfil|Your profile|Seu perfil|Votre profil|Dein Profil|Il tuo profilo|プロフィール|내 프로필|你的个人资料|你的個人檔案|Ваш профиль|ملفك الشخصي|आपकी प्रोफ़ाइल|Je profiel|Profiliniz|Twój profil|Ваш профіль|Profil Anda|Din profil|El teu perfil
+¡Todo listo!|All set!|Tudo pronto!|Tout est prêt !|Alles bereit!|Tutto pronto!|準備完了！|모두 준비되었습니다!|一切就绪！|一切就緒！|Всё готово!|كل شيء جاهز!|सब तैयार है!|Alles klaar!|Her şey hazır!|Wszystko gotowe!|Усе готово!|Semua siap!|Allt klart!|Tot a punt!
+Hacer el recorrido|Take the tour|Fazer o tour|Faire la visite|Rundgang starten|Fai il tour|ツアーを開始|둘러보기|开始导览|開始導覽|Пройти обзор|ابدأ الجولة|टूर शुरू करें|Rondleiding starten|Turu başlat|Rozpocznij przewodnik|Пройти огляд|Ikuti tur|Ta en rundtur|Fes el recorregut
+Abrir el Handbook|Open the Handbook|Abrir o Handbook|Ouvrir le Handbook|Handbook öffnen|Apri l'Handbook|Handbook を開く|Handbook 열기|打开 Handbook|開啟 Handbook|Открыть Handbook|فتح الدليل|Handbook खोलें|Handbook openen|Handbook'u aç|Otwórz Handbook|Відкрити Handbook|Buka Handbook|Öppna Handbook|Obre el Handbook
+Centro de bienvenida|Welcome center|Central de boas-vindas|Centre de bienvenue|Willkommenscenter|Centro di benvenuto|ようこそセンター|시작 센터|欢迎中心|歡迎中心|Центр приветствия|مركز الترحيب|स्वागत केंद्र|Welkomstcentrum|Karşılama merkezi|Centrum powitalne|Центр привітання|Pusat sambutan|Välkomstcenter|Centre de benvinguda
+Empezar a usar EISENKU|Start using EISENKU|Começar a usar o EISENKU|Commencer à utiliser EISENKU|EISENKU verwenden|Inizia a usare EISENKU|EISENKU を使い始める|EISENKU 시작하기|开始使用 EISENKU|開始使用 EISENKU|Начать работу с EISENKU|ابدأ استخدام EISENKU|EISENKU का उपयोग शुरू करें|Aan de slag met EISENKU|EISENKU'yu kullanmaya başla|Zacznij korzystać z EISENKU|Почати роботу з EISENKU|Mulai gunakan EISENKU|Börja använda EISENKU|Comença a fer servir EISENKU
+Configuración inicial|Initial setup|Configuração inicial|Configuration initiale|Ersteinrichtung|Configurazione iniziale|初期設定|초기 설정|初始设置|初始設定|Начальная настройка|الإعداد الأولي|प्रारंभिक सेटअप|Eerste installatie|İlk kurulum|Konfiguracja początkowa|Початкове налаштування|Penyiapan awal|Första konfiguration|Configuració inicial
+Tutorial completado|Tutorial completed|Tutorial concluído|Tutoriel terminé|Tutorial abgeschlossen|Tutorial completato|チュートリアル完了|튜토리얼 완료|教程已完成|教學課程已完成|Обучение завершено|اكتمل البرنامج التعليمي|ट्यूटोरियल पूरा हुआ|Tutorial voltooid|Eğitim tamamlandı|Samouczek ukończony|Навчання завершено|Tutorial selesai|Självstudien är klar|Tutorial completat
+Apariencia|Appearance|Aparência|Apparence|Darstellung|Aspetto|外観|모양|外观|外觀|Внешний вид|المظهر|रूप|Weergave|Görünüm|Wygląd|Вигляд|Tampilan|Utseende|Aparença
+Temas|Themes|Temas|Thèmes|Designs|Temi|テーマ|테마|主题|佈景主題|Темы|السمات|थीम|Thema's|Temalar|Motywy|Теми|Tema|Teman|Temes
+Personalización|Personalization|Personalização|Personnalisation|Personalisierung|Personalizzazione|個人用設定|개인 설정|个性化|個人化|Персонализация|التخصيص|वैयक्तिकरण|Persoonlijke instellingen|Kişiselleştirme|Personalizacja|Персоналізація|Personalisasi|Anpassning|Personalització
+Entorno Linux / Windows|Linux / Windows environment|Ambiente Linux / Windows|Environnement Linux / Windows|Linux-/Windows-Umgebung|Ambiente Linux / Windows|Linux / Windows 環境|Linux / Windows 환경|Linux / Windows 环境|Linux / Windows 環境|Среда Linux / Windows|بيئة Linux / Windows|Linux / Windows परिवेश|Linux-/Windows-omgeving|Linux / Windows ortamı|Środowisko Linux / Windows|Середовище Linux / Windows|Lingkungan Linux / Windows|Linux-/Windows-miljö|Entorn Linux / Windows
+Idiomas y región|Language & region|Idioma e região|Langue et région|Sprache und Region|Lingua e area geografica|言語と地域|언어 및 지역|语言和区域|語言與地區|Язык и регион|اللغة والمنطقة|भाषा और क्षेत्र|Taal en regio|Dil ve bölge|Język i region|Мова та регіон|Bahasa & wilayah|Språk och region|Idioma i regió
+Pantalla|Display|Tela|Affichage|Bildschirm|Schermo|ディスプレイ|디스플레이|显示|顯示器|Экран|الشاشة|डिस्प्ले|Beeldscherm|Ekran|Ekran|Екран|Layar|Skärm|Pantalla
+Sonido|Sound|Som|Son|Sound|Audio|サウンド|소리|声音|音效|Звук|الصوت|ध्वनि|Geluid|Ses|Dźwięk|Звук|Suara|Ljud|So
+Rendimiento|Performance|Desempenho|Performances|Leistung|Prestazioni|パフォーマンス|성능|性能|效能|Производительность|الأداء|प्रदर्शन|Prestaties|Performans|Wydajność|Продуктивність|Performa|Prestanda|Rendiment
+Privacidad|Privacy|Privacidade|Confidentialité|Datenschutz|Privacy|プライバシー|개인 정보|隐私|隱私權|Конфиденциальность|الخصوصية|गोपनीयता|Privacy|Gizlilik|Prywatność|Конфіденційність|Privasi|Integritet|Privadesa
+Seguridad|Security|Segurança|Sécurité|Sicherheit|Sicurezza|セキュリティ|보안|安全|安全性|Безопасность|الأمان|सुरक्षा|Beveiliging|Güvenlik|Bezpieczeństwo|Безпека|Keamanan|Säkerhet|Seguretat
+Cuentas|Accounts|Contas|Comptes|Konten|Account|アカウント|계정|账户|帳戶|Учётные записи|الحسابات|खाते|Accounts|Hesaplar|Konta|Облікові записи|Akun|Konton|Comptes
+Almacenamiento|Storage|Armazenamento|Stockage|Speicher|Archiviazione|ストレージ|저장소|存储|儲存空間|Хранилище|التخزين|स्टोरेज|Opslag|Depolama|Pamięć|Сховище|Penyimpanan|Lagring|Emmagatzematge
+Red|Network|Rede|Réseau|Netzwerk|Rete|ネットワーク|네트워크|网络|網路|Сеть|الشبكة|नेटवर्क|Netwerk|Ağ|Sieć|Мережа|Jaringan|Nätverk|Xarxa
+Navegador|Browser|Navegador|Navigateur|Browser|Browser|ブラウザー|브라우저|浏览器|瀏覽器|Браузер|المتصفح|ब्राउज़र|Browser|Tarayıcı|Przeglądarka|Браузер|Peramban|Webbläsare|Navegador
+Asistente|Assistant|Assistente|Assistant|Assistent|Assistente|アシスタント|도우미|助手|助理|Помощник|المساعد|सहायक|Assistent|Asistan|Asystent|Помічник|Asisten|Assistent|Assistent
+Copias de seguridad|Backups|Backups|Sauvegardes|Sicherungen|Backup|バックアップ|백업|备份|備份|Резервные копии|النسخ الاحتياطية|बैकअप|Back-ups|Yedeklemeler|Kopie zapasowe|Резервні копії|Cadangan|Säkerhetskopior|Còpies de seguretat
+Actualizaciones|Updates|Atualizações|Mises à jour|Updates|Aggiornamenti|更新|업데이트|更新|更新|Обновления|التحديثات|अपडेट|Updates|Güncellemeler|Aktualizacje|Оновлення|Pembaruan|Uppdateringar|Actualitzacions
+Información de EISENKU OS|About EISENKU OS|Sobre o EISENKU OS|À propos d'EISENKU OS|Über EISENKU OS|Informazioni su EISENKU OS|EISENKU OS について|EISENKU OS 정보|关于 EISENKU OS|關於 EISENKU OS|О EISENKU OS|حول EISENKU OS|EISENKU OS के बारे में|Over EISENKU OS|EISENKU OS hakkında|O EISENKU OS|Про EISENKU OS|Tentang EISENKU OS|Om EISENKU OS|Quant a EISENKU OS
+Accesibilidad|Accessibility|Acessibilidade|Accessibilité|Barrierefreiheit|Accessibilità|アクセシビリティ|접근성|辅助功能|協助工具|Специальные возможности|إمكانية الوصول|सुलभता|Toegankelijkheid|Erişilebilirlik|Ułatwienia dostępu|Спеціальні можливості|Aksesibilitas|Tillgänglighet|Accessibilitat
+Idioma de la interfaz|Interface language|Idioma da interface|Langue de l'interface|Sprache der Oberfläche|Lingua dell'interfaccia|表示言語|인터페이스 언어|界面语言|介面語言|Язык интерфейса|لغة الواجهة|इंटरफ़ेस की भाषा|Taal van de interface|Arayüz dili|Język interfejsu|Мова інтерфейсу|Bahasa antarmuka|Gränssnittsspråk|Idioma de la interfície
+Temas del sistema|System themes|Temas do sistema|Thèmes du système|Systemdesigns|Temi di sistema|システムテーマ|시스템 테마|系统主题|系統佈景主題|Темы системы|سمات النظام|सिस्टम थीम|Systeemthema's|Sistem temaları|Motywy systemowe|Теми системи|Tema sistem|Systemteman|Temes del sistema
+Colores de acento|Accent colors|Cores de destaque|Couleurs d'accentuation|Akzentfarben|Colori principali|アクセントカラー|강조 색|强调色|輔色|Цвета акцента|ألوان التمييز|एक्सेंट रंग|Accentkleuren|Vurgu renkleri|Kolory akcentu|Кольори акценту|Warna aksen|Accentfärger|Colors d'accent
+Atajos de teclado|Keyboard shortcuts|Atalhos de teclado|Raccourcis clavier|Tastenkombinationen|Scorciatoie da tastiera|キーボード ショートカット|바로 가기 키|键盘快捷键|鍵盤快速鍵|Сочетания клавиш|اختصارات لوحة المفاتيح|कीबोर्ड शॉर्टकट|Sneltoetsen|Klavye kısayolları|Skróty klawiszowe|Сполучення клавіш|Pintasan keyboard|Kortkommandon|Dreceres de teclat
+Perfiles locales|Local profiles|Perfis locais|Profils locaux|Lokale Profile|Profili locali|ローカル プロファイル|로컬 프로필|本地配置文件|本機設定檔|Локальные профили|الملفات الشخصية المحلية|स्थानीय प्रोफ़ाइल|Lokale profielen|Yerel profiller|Profile lokalne|Локальні профілі|Profil lokal|Lokala profiler|Perfils locals
+Copia de seguridad completa|Full backup|Backup completo|Sauvegarde complète|Vollständige Sicherung|Backup completo|完全バックアップ|전체 백업|完整备份|完整備份|Полная резервная копия|نسخة احتياطية كاملة|पूरा बैकअप|Volledige back-up|Tam yedekleme|Pełna kopia zapasowa|Повна резервна копія|Cadangan lengkap|Fullständig säkerhetskopia|Còpia de seguretat completa
+Puntos de restauración|Restore points|Pontos de restauração|Points de restauration|Wiederherstellungspunkte|Punti di ripristino|復元ポイント|복원 지점|还原点|還原點|Точки восстановления|نقاط الاستعادة|पुनर्स्थापना बिंदु|Herstelpunten|Geri yükleme noktaları|Punkty przywracania|Точки відновлення|Titik pemulihan|Återställningspunkter|Punts de restauració
+Uso del almacenamiento|Storage usage|Uso do armazenamento|Utilisation du stockage|Speichernutzung|Utilizzo dello spazio|ストレージの使用状況|저장소 사용량|存储使用情况|儲存空間使用量|Использование хранилища|استخدام التخزين|स्टोरेज उपयोग|Opslaggebruik|Depolama kullanımı|Użycie pamięci|Використання сховища|Penggunaan penyimpanan|Lagringsanvändning|Ús de l'emmagatzematge
+Estado de seguridad|Security status|Status de segurança|État de la sécurité|Sicherheitsstatus|Stato della sicurezza|セキュリティの状態|보안 상태|安全状态|安全性狀態|Состояние безопасности|حالة الأمان|सुरक्षा स्थिति|Beveiligingsstatus|Güvenlik durumu|Stan zabezpieczeń|Стан безпеки|Status keamanan|Säkerhetsstatus|Estat de la seguretat
+Calculadora|Calculator|Calculadora|Calculatrice|Rechner|Calcolatrice|電卓|계산기|计算器|小算盤|Калькулятор|الآلة الحاسبة|कैलकुलेटर|Rekenmachine|Hesap makinesi|Kalkulator|Калькулятор|Kalkulator|Kalkylator|Calculadora
+Calendario|Calendar|Calendário|Calendrier|Kalender|Calendario|カレンダー|달력|日历|行事曆|Календарь|التقويم|कैलेंडर|Agenda|Takvim|Kalendarz|Календар|Kalender|Kalender|Calendari
+Notas|Notes|Notas|Notes|Notizen|Note|メモ|메모|便笺|便箋|Заметки|الملاحظات|नोट्स|Notities|Notlar|Notatki|Нотатки|Catatan|Anteckningar|Notes
+Tareas|Tasks|Tarefas|Tâches|Aufgaben|Attività|タスク|작업|任务|工作|Задачи|المهام|कार्य|Taken|Görevler|Zadania|Завдання|Tugas|Uppgifter|Tasques
+Clima|Weather|Clima|Météo|Wetter|Meteo|天気|날씨|天气|天氣|Погода|الطقس|मौसम|Weer|Hava durumu|Pogoda|Погода|Cuaca|Väder|Temps
+Mapas|Maps|Mapas|Plans|Karten|Mappe|マップ|지도|地图|地圖|Карты|الخرائط|मानचित्र|Kaarten|Haritalar|Mapy|Карти|Peta|Kartor|Mapes
+Cámara|Camera|Câmera|Caméra|Kamera|Fotocamera|カメラ|카메라|相机|相機|Камера|الكاميرا|कैमरा|Camera|Kamera|Aparat|Камера|Kamera|Kamera|Càmera
+Traductor|Translator|Tradutor|Traducteur|Übersetzer|Traduttore|翻訳|번역기|翻译|翻譯工具|Переводчик|المترجم|अनुवादक|Vertaler|Çevirmen|Tłumacz|Перекладач|Penerjemah|Översättare|Traductor
+Volumen|Volume|Volume|Volume|Lautstärke|Volume|音量|볼륨|音量|音量|Громкость|مستوى الصوت|वॉल्यूम|Volume|Ses düzeyi|Głośność|Гучність|Volume|Volym|Volum
+Bajo consumo|Low power|Baixo consumo|Économie d'énergie|Energiesparen|Basso consumo|省電力|저전력|低功耗|低耗電|Энергосбережение|الطاقة المنخفضة|कम पावर|Energiebesparing|Düşük güç|Oszczędzanie energii|Енергозбереження|Daya rendah|Energisparläge|Baix consum
+Ayuda|Help|Ajuda|Aide|Hilfe|Guida|ヘルプ|도움말|帮助|說明|Справка|المساعدة|सहायता|Help|Yardım|Pomoc|Довідка|Bantuan|Hjälp|Ajuda

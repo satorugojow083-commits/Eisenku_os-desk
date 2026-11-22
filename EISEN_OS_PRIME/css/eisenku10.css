@@ -1,0 +1,200 @@
+/* =====================================================================
+   EISENKU OS 10.0 NEXT GENERATION · Estilos del escritorio y la accesibilidad 10.0
+   Se carga después de eisenku9.css. Identidad: negro, verde oscuro, rosa y gris neutro.
+   ===================================================================== */
+
+/* ---------- 0. Afinado de identidad 10.0 (tipografía, espaciado y ventanas) ---------- */
+:root.os9 { --s10-anim: 1; --s10-tb-h: 48px; --s10-pl: 0px; --s10-pr: 0px; --s10-safe-scale: 1; --s10-mag: 2; --s10-mx: 50vw; --s10-my: 50vh;
+  --e9-green-deep: #14563f; --e9-gray: #8b919c; }
+.os9 .window-header .window-title-area { font-weight: 600; letter-spacing: .01em; }
+.os9 .window { transition: box-shadow var(--e9-dur) var(--e9-ease), border-color var(--e9-dur) var(--e9-ease); }
+.os9 .window.active { box-shadow: var(--e9-shadow-3), 0 0 0 1px color-mix(in srgb, var(--e9-pink) 18%, transparent); }
+.os9 .ctx-item kbd { margin-left: auto; opacity: .7; }
+.os9 #context-menu { min-width: 230px; }
+
+/* ---------- 1. Animaciones de ventana configurables ---------- */
+.os9 .window.open.eis-anim-in { animation-duration: calc(.22s / var(--s10-anim)); }
+:root[data-winanim="none"] .window.open.eis-anim-in { animation: none !important; }
+:root[data-winanim="fade"] .window.open.eis-anim-in { animation-name: s10fade; }
+:root[data-winanim="slide"] .window.open.eis-anim-in { animation-name: s10slide; }
+@keyframes s10fade { from { opacity: 0; } }
+@keyframes s10slide { from { opacity: 0; transform: translateY(28px); } }
+.os9 .window.s10-out { transition: opacity calc(.14s / var(--s10-anim)), transform calc(.14s / var(--s10-anim)) !important; opacity: 0; transform: scale(.96); }
+.os9 .window.s10-out-min { transition: opacity calc(.14s / var(--s10-anim)), transform calc(.14s / var(--s10-anim)) !important; opacity: 0; transform: translateY(40px) scale(.9); }
+
+/* ---------- 2. Diseños de ajuste, vista previa y asistente ---------- */
+#s10-snapfly { position: fixed; z-index: 9800; width: 312px; padding: 12px; border-radius: var(--e9-r-lg); background: var(--e9-glass-2); backdrop-filter: var(--e9-blur); border: 1px solid var(--e9-line-2); box-shadow: var(--e9-shadow-3); display: flex; flex-direction: column; gap: 8px; font-size: 12px; animation: pop .14s; }
+#s10-snapfly > b { font-size: 12px; color: var(--e9-text-2); }
+#s10-snapfly small { color: var(--e9-muted); font-size: 11px; }
+.s10-lays { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.s10-lay { position: relative; height: 46px; border-radius: 7px; background: var(--e9-bg-2); border: 1px solid var(--e9-line); }
+.s10-lay button { position: absolute; border: 1.5px solid var(--e9-bg-2); border-radius: 5px; background: var(--e9-elev-3); transition: background .12s; }
+.s10-lay button:hover, .s10-lay button:focus-visible { background: var(--accent); outline: none; }
+#s10-snapprev { position: fixed; z-index: 99; pointer-events: none; border-radius: var(--e9-r-lg); background: color-mix(in srgb, var(--accent) 18%, transparent); border: 2px solid color-mix(in srgb, var(--accent) 60%, transparent); backdrop-filter: blur(6px); transition: all .12s var(--e9-ease); }
+.s10-assist { position: fixed; z-index: 9700; display: grid; place-items: center; background: rgba(5, 6, 8, .55); border: 2px dashed color-mix(in srgb, var(--accent) 70%, transparent); border-radius: var(--e9-r-lg); backdrop-filter: blur(10px); padding: 12px; }
+.s10-assist > div { display: flex; flex-direction: column; align-items: center; gap: 10px; max-width: 100%; color: #fff; }
+.s10-assist-l { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-height: 60vh; overflow: auto; }
+.s10-assist-l button { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px; width: 120px; border-radius: var(--e9-r); background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .12); color: #fff; }
+.s10-assist-l button:hover, .s10-assist-l button:focus-visible { background: var(--accent-soft); border-color: var(--accent); }
+.s10-assist-l span { font-size: 11.5px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---------- 3. Conmutador y exposé ---------- */
+#s10-switch { position: fixed; inset: 0; z-index: 9900; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: rgba(5, 6, 8, .45); backdrop-filter: blur(6px); }
+.s10-sw-list { display: flex; gap: 10px; padding: 16px; max-width: 92vw; overflow-x: auto; border-radius: var(--e9-r-xl); background: var(--e9-glass-2); border: 1px solid var(--e9-line-2); box-shadow: var(--e9-shadow-3); }
+.s10-sw-list button { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 132px; padding: 12px 8px; border-radius: var(--e9-r); border: 2px solid transparent; color: var(--e9-text); }
+.s10-sw-list button.on { background: var(--accent-soft); border-color: var(--accent); }
+.s10-sw-list b { font-size: 12px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .s10-sw-list small { color: var(--e9-muted); font-size: 10.5px; min-height: 13px; }
+#s10-switch p { color: #fff; opacity: .8; font-size: 12px; }
+#s10-expose { position: fixed; inset: 0; z-index: 9600; background: rgba(5, 6, 8, .62); backdrop-filter: blur(14px); }
+#s10-expose > p { position: absolute; top: calc(var(--top-h) + 14px); left: 0; right: 0; text-align: center; color: #fff; opacity: .85; font-size: 13px; }
+.s10-exp-min { position: absolute; bottom: calc(var(--taskbar-h) + 14px); left: 0; right: 0; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.s10-exp-min button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 99px; background: rgba(255, 255, 255, .1); color: #fff; border: 1px solid rgba(255, 255, 255, .16); }
+.s10-exp .window.open { cursor: pointer; }
+.s10-exp .window.open > * { pointer-events: none; }
+.s10-exp .window.open:hover { outline: 3px solid var(--accent); outline-offset: 2px; }
+.s10-exp .window.open::after { content: attr(data-exp-label); position: absolute; left: 50%; bottom: -34px; transform: translateX(-50%); padding: 4px 12px; border-radius: 99px; background: rgba(0, 0, 0, .7); color: #fff; font-size: 13px; white-space: nowrap; pointer-events: none; }
+.s10-ovbtn { align-self: center; color: #fff !important; background: rgba(255, 255, 255, .08) !important; border: 1px solid rgba(255, 255, 255, .16) !important; }
+
+/* ---------- 4. Barra de tareas personalizable (modo Windows) ---------- */
+:root[data-env="windows"] #taskbar { height: var(--s10-tb-h); }
+:root[data-tbsize="sm"] #taskbar .tb-btn { min-width: 34px; height: 32px; } :root[data-tbsize="lg"] #taskbar .tb-btn { min-width: 48px; height: 46px; }
+:root[data-env="windows"][data-tbpos="top"] #taskbar { top: 0; bottom: auto; border-top: 0; border-bottom: 1px solid var(--e9-line-2); }
+:root[data-env="windows"][data-tbpos="top"] #desktop-viewport { top: var(--top-h); bottom: 0; }
+:root[data-env="windows"][data-tbpos="top"] #start-menu-panel { top: calc(var(--s10-tb-h) + 10px); bottom: auto; transform: translateX(-50%) translateY(-30px); }
+:root[data-env="windows"][data-tbpos="top"] #start-menu-panel.open { transform: translateX(-50%) translateY(0); }
+:root[data-env="windows"][data-tbpos="top"] #action-center, :root[data-env="windows"][data-tbpos="top"] #s9-nc, :root[data-env="windows"][data-tbpos="top"] #s9-wpanel, :root[data-env="windows"][data-tbpos="top"] #s10-clip { top: calc(var(--s10-tb-h) + 10px); bottom: auto; }
+:root[data-env="windows"][data-tbpos="top"] #eis-notes { top: calc(var(--s10-tb-h) + 10px); bottom: auto; }
+:root[data-env="windows"][data-tbautohide="1"] #taskbar { transition: transform .22s var(--e9-ease); transform: translateY(calc(100% + 2px)); }
+:root[data-env="windows"][data-tbautohide="1"][data-tbpos="top"] #taskbar { transform: translateY(calc(-100% - 2px)); }
+:root[data-env="windows"][data-tbautohide="1"].s10-tbpeek #taskbar, :root[data-env="windows"][data-tbautohide="1"] #taskbar:hover, :root[data-env="windows"][data-tbautohide="1"] #taskbar:focus-within { transform: none; }
+:root[data-env="windows"][data-tbautohide="1"]:not([data-tbpos="top"]) #start-menu-panel, :root[data-env="windows"][data-tbautohide="1"]:not([data-tbpos="top"]) #action-center, :root[data-env="windows"][data-tbautohide="1"]:not([data-tbpos="top"]) #s9-nc { bottom: calc(var(--s10-tb-h) + 10px); }
+#s10-tb-edge { position: fixed; left: 0; right: 0; bottom: 0; height: 4px; z-index: 9200; }
+#s10-tb-edge[data-pos="top"] { top: 0; bottom: auto; }
+:root[data-tblabels="1"] #taskbar .tb-app.running { width: auto; padding: 0 10px 0 6px; gap: 6px; display: inline-flex; align-items: center; }
+:root[data-tblabels="1"] #taskbar .tb-app.running::after { content: attr(title); font-size: 12px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+:root[data-tbhide~="search"] #taskbar .tb-search, :root[data-tbhide~="taskview"] #s9-taskview, :root[data-tbhide~="widgets"] #s9-widgets-btn, :root[data-tbhide~="grid"] #taskbar .tb-grid, :root[data-tbhide~="weather"] #taskbar-left { display: none !important; }
+
+/* ---------- 5. Paneles laterales ---------- */
+.s10-panel { position: fixed; top: calc(var(--top-h) + 8px); bottom: calc(var(--taskbar-h) + 8px); width: var(--s10-pw, 300px); z-index: 9300; display: flex; flex-direction: column; border-radius: var(--e9-r-xl); background: var(--e9-glass-2); backdrop-filter: var(--e9-blur); border: 1px solid var(--e9-line-2); box-shadow: var(--e9-shadow-3); transition: transform .24s var(--e9-ease), opacity .2s; opacity: 0; pointer-events: none; }
+:root[data-env="linux"] .s10-panel { bottom: 84px; }
+.s10-panel-left { left: 8px; transform: translateX(-30px); } .s10-panel-right { right: 8px; transform: translateX(30px); }
+.s10-panel.open { opacity: 1; transform: none; pointer-events: auto; }
+.s10-panel header { display: flex; align-items: center; gap: 4px; padding: 10px 10px 8px 14px; border-bottom: 1px solid var(--e9-line); } .s10-panel header b { flex: 1; font-size: 13px; }
+.s10-panel-body { flex: 1; overflow: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+.s10-pw { background: var(--e9-elev); border: 1px solid var(--e9-line); border-radius: var(--e9-r-lg); padding: 10px 12px; font-size: 12.5px; }
+.s10-pw h6 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--e9-muted); margin-bottom: 6px; }
+.s10-pw ul { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+:root.s10-pin .window.maximized { left: var(--s10-pl) !important; width: calc(100vw - var(--s10-pl) - var(--s10-pr)) !important; }
+.s10-pedge { position: fixed; top: 30%; bottom: 30%; width: 3px; z-index: 9250; } .s10-pedge-left { left: 0; } .s10-pedge-right { right: 0; }
+.s10-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; max-height: 46vh; overflow: auto; margin: 8px 0; font-size: 12.5px; } .s10-pick label { display: flex; gap: 6px; align-items: center; }
+
+/* ---------- 6. Widgets interactivos ---------- */
+.s10-w-big { display: block; font-size: 26px; font-weight: 650; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.s9-w input.input-text, .s10-pw input.input-text { width: 100%; padding: 6px 9px; font-size: 12.5px; }
+.s10-w-todo { list-style: none; margin-bottom: 6px; } .s10-w-todo label { display: flex; gap: 6px; align-items: center; cursor: pointer; }
+.s10-w-sticky { width: 100%; min-height: 96px; resize: vertical; border: 0; border-radius: 8px; padding: 8px; background: #f4e7a1; color: #3b3417; font: 13px/1.45 var(--e9-font); }
+.s10-w-cv { width: 100%; height: 60px; display: block; }
+.s10-w-clip { list-style: none; display: flex; flex-direction: column; gap: 4px; } .s10-w-clip button { width: 100%; text-align: left; padding: 4px 6px; border-radius: 6px; background: var(--e9-bg-2); font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.s10-w-photo { width: 100%; max-height: 180px; object-fit: cover; border-radius: 8px; cursor: pointer; display: block; }
+.s10-w-launch { display: flex; flex-direction: column; gap: 2px; } .s10-w-launch button { display: flex; align-items: center; gap: 8px; padding: 5px 6px; border-radius: 7px; text-align: left; } .s10-w-launch button:hover { background: var(--card-hover); }
+#s9-widgets.s10-free { inset: 0; width: auto; top: 0; right: 0; left: 0; bottom: 0; display: block; }
+#s9-widgets.s10-free .s9-w { position: absolute; width: 260px; }
+#s9-widgets.s10-free .s9-w > h6 { cursor: grab; touch-action: none; } #s9-widgets.s10-free .s9-w > h6:active { cursor: grabbing; }
+
+/* ---------- 7. Portapapeles, ideas y hoja de atajos ---------- */
+#s10-clip { position: fixed; right: 12px; bottom: calc(var(--taskbar-h) + 10px); width: 380px; max-width: calc(100vw - 24px); max-height: min(560px, calc(100dvh - var(--taskbar-h) - var(--top-h) - 24px)); z-index: 9550; display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: var(--e9-r-xl); background: var(--e9-glass-2); backdrop-filter: var(--e9-blur); border: 1px solid var(--e9-line-2); box-shadow: var(--e9-shadow-3); animation: pop .14s; }
+:root[data-env="linux"] #s10-clip { top: calc(var(--top-h) + 8px); bottom: auto; }
+#s10-clip header { display: flex; align-items: center; gap: 6px; } #s10-clip header .sp { flex: 1; }
+.s10-clip-l { flex: 1; overflow: auto; display: flex; flex-direction: column; gap: 6px; }
+.s10-clip-it { position: relative; padding: 8px 64px 8px 10px; border-radius: var(--e9-r); background: var(--e9-elev); border: 1px solid var(--e9-line); cursor: pointer; }
+.s10-clip-it:hover, .s10-clip-it:focus-visible { border-color: var(--accent); outline: none; }
+.s10-clip-it.pin { border-left: 3px solid var(--e9-pink); }
+.s10-clip-it p { font-size: 12.5px; white-space: pre-wrap; word-break: break-word; max-height: 4.4em; overflow: hidden; } .s10-clip-it small { color: var(--e9-muted); font-size: 10.5px; }
+.s10-clip-a { position: absolute; top: 6px; right: 6px; display: flex; gap: 2px; } .s10-clip-a button { padding: 4px; border-radius: 6px; color: var(--e9-muted); } .s10-clip-a button:hover { background: var(--card-hover); color: var(--e9-text); }
+#s10-clip footer { display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: var(--e9-muted); }
+#s10-capture { position: fixed; left: 50%; top: 22%; transform: translateX(-50%); z-index: 99960; width: min(520px, 94vw); display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: var(--e9-r-xl); background: var(--e9-glass-2); backdrop-filter: var(--e9-blur); border: 1px solid var(--e9-line-3); box-shadow: var(--e9-shadow-3); animation: pop .14s; }
+#s10-capture header { display: flex; align-items: center; gap: 8px; } #s10-capture header small { margin-left: auto; color: var(--e9-muted); font-size: 11px; }
+#s10-capture textarea { width: 100%; resize: vertical; border-radius: var(--e9-r); padding: 10px; background: var(--e9-bg-2); color: var(--e9-text); border: 1px solid var(--e9-line-2); font: 14px/1.5 var(--e9-font); }
+.s10-cheats-card { width: min(980px, 96vw); max-width: none; max-height: 86vh; overflow: auto; }
+.s10-cheats-g { columns: 3 260px; column-gap: 24px; } .s10-cheats-g section { break-inside: avoid; margin-bottom: 12px; }
+.s10-cheats-g h5 { font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: var(--e9-pink); margin: 6px 0; }
+.s10-cheats-g div { display: flex; justify-content: space-between; gap: 10px; align-items: center; padding: 3px 0; font-size: 12px; border-bottom: 1px solid var(--e9-line); } .s10-cheats-g kbd { white-space: nowrap; }
+
+/* ---------- 8. Seguridad: bloqueo de apps y pantalla de privacidad ---------- */
+.s10-lockov { position: absolute; inset: 40px 0 0 0; z-index: 50; display: grid; place-items: center; background: var(--e9-solid); border-radius: 0 0 var(--e9-r-lg) var(--e9-r-lg); }
+.s10-lockov > div { display: flex; flex-direction: column; align-items: center; gap: 10px; width: min(280px, 90%); text-align: center; }
+.s10-lockov p { color: var(--e9-muted); font-size: 12px; } .s10-lockov input { width: 100%; text-align: center; letter-spacing: .3em; padding: 10px; border-radius: var(--e9-r); background: var(--e9-bg-2); border: 1px solid var(--e9-line-2); color: var(--e9-text); font-size: 18px; }
+.s10-lockov small { color: var(--e9-danger); min-height: 14px; }
+:root.s10-privacy body > *:not(#s9-login) { filter: blur(22px) grayscale(.4); transition: filter .1s; }
+
+/* ---------- 9. Accesibilidad: foco, mando, lupa, filtros, contraste, cursor ---------- */
+#s10-gpring { position: fixed; z-index: 100000; pointer-events: none; border-radius: 10px; border: 3px solid #ffd166; box-shadow: 0 0 0 3px rgba(0, 0, 0, .75), 0 0 22px rgba(255, 209, 102, .5); transition: all .09s ease-out; }
+.s10-padnav :focus { outline: none !important; }
+.s10-skip { position: fixed; left: 8px; top: -60px; z-index: 100001; padding: 8px 14px; border-radius: 8px; background: var(--e9-elev-3); color: var(--e9-text) !important; border: 2px solid var(--e9-pink); }
+.s10-skip:focus { top: 8px; }
+html.s10-safe body { transform: scale(var(--s10-safe-scale)); transform-origin: 50% 50%; }
+html.s10-mag body { transform: scale(var(--s10-mag)); transform-origin: var(--s10-mx) var(--s10-my); }
+html.s10-mag { overflow: hidden; background: #000; }
+html[data-cfilter="grayscale"] { filter: grayscale(1); }
+html[data-cfilter="invert"] { filter: invert(1) hue-rotate(180deg); }
+html[data-cfilter="protanopia"] { filter: url(#s10-f-protanopia); } html[data-cfilter="deuteranopia"] { filter: url(#s10-f-deuteranopia); } html[data-cfilter="tritanopia"] { filter: url(#s10-f-tritanopia); }
+:root.os9.hc[data-hct="dark"] { --e9-bg: #000; --e9-surface: #000; --e9-text: #fff; --e9-muted: #fff; --e9-line: #fff; --e9-line-2: #fff; --text-main: #fff; --text-muted: #fff; --win-bg: #000; --shell-bg: #000; --accent: #3ff0c0; }
+:root.os9.hc[data-hct="light"] { --e9-bg: #fff; --e9-solid: #fff; --e9-elev: #fff; --e9-elev-2: #f2f2f2; --e9-elev-3: #e6e6e6; --e9-surface: #fff; --e9-glass: #fff; --e9-glass-2: #fff; --e9-text: #000; --e9-text-2: #000; --e9-muted: #111; --e9-line: #000; --e9-line-2: #000; --e9-line-3: #000; --text-main: #000; --text-muted: #111; --win-bg: #fff; --shell-bg: #fff; --card-bg: #fff; --card-border: #000; --accent: #0a4fb0; color-scheme: light; }
+:root.os9.hc[data-hct="yellow"] { --e9-bg: #000; --e9-solid: #000; --e9-elev: #000; --e9-elev-2: #111; --e9-elev-3: #1c1c00; --e9-surface: #000; --e9-glass: #000; --e9-glass-2: #000; --e9-text: #ffef00; --e9-text-2: #ffef00; --e9-muted: #fff47a; --e9-line: #ffef00; --e9-line-2: #ffef00; --e9-line-3: #ffef00; --text-main: #ffef00; --text-muted: #fff47a; --win-bg: #000; --shell-bg: #000; --card-bg: #000; --card-border: #ffef00; --accent: #ffef00; --e9-green: #ffef00; --e9-pink: #ff9cff; }
+:root.os9.hc[data-hct="aquatic"] { --e9-bg: #0b1b2b; --e9-solid: #0b1b2b; --e9-elev: #102538; --e9-elev-2: #133049; --e9-elev-3: #183a58; --e9-surface: #0b1b2b; --e9-glass: #0b1b2b; --e9-glass-2: #0b1b2b; --e9-text: #fff; --e9-text-2: #e6fbff; --e9-muted: #9fe7ff; --e9-line: #7fe5ff; --e9-line-2: #7fe5ff; --text-main: #fff; --text-muted: #9fe7ff; --win-bg: #0b1b2b; --shell-bg: #0b1b2b; --card-bg: #102538; --card-border: #7fe5ff; --accent: #ffd34d; --e9-green: #5ff5c4; --e9-pink: #ffb3e6; }
+/* puntero grande (la preferencia existía en 9.0 sin estilos) y extragrande */
+html.s9-big-cursor, html.s9-big-cursor * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24'%3E%3Cpath d='M3 2l15 9-6.5 1.6L15 20l-3 1.4-3.4-7.3L3 18z' fill='%23fff' stroke='%23000' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E") 4 2, auto; }
+html.s9-big-cursor a, html.s9-big-cursor button, html.s9-big-cursor [role="button"], html.s9-big-cursor label, html.s9-big-cursor select { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24'%3E%3Cpath d='M3 2l15 9-6.5 1.6L15 20l-3 1.4-3.4-7.3L3 18z' fill='%23ffd166' stroke='%23000' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E") 4 2, pointer; }
+html.s9-big-cursor input[type="text"], html.s9-big-cursor input:not([type]), html.s9-big-cursor textarea, html.s9-big-cursor [contenteditable="true"] { cursor: text; }
+.s10-locate { position: fixed; z-index: 100002; width: 120px; height: 120px; margin: -60px 0 0 -60px; border-radius: 50%; border: 4px solid var(--e9-pink); pointer-events: none; animation: s10loc .9s ease-out forwards; }
+@keyframes s10loc { from { transform: scale(1.4); opacity: 1; } to { transform: scale(.15); opacity: .2; } }
+#s10-sticky { position: fixed; left: 50%; bottom: calc(var(--taskbar-h) + 14px); transform: translateX(-50%); z-index: 99990; padding: 6px 14px; border-radius: 99px; background: var(--e9-elev-3); border: 2px solid var(--e9-pink); font: 600 13px var(--e9-mono); }
+/* objetivos táctiles más grandes (perfiles de pantalla Tableta, Teléfono y TV) */
+:root.s10-touch .k9-btn, :root.s10-touch .btn-primary, :root.s10-touch .btn-secondary, :root.s10-touch .ctx-item, :root.s10-touch .k9-item { min-height: 40px; }
+:root.s10-touch .k9-switch { width: 46px; height: 26px; } :root.s10-touch .k9-switch::after { width: 20px; height: 20px; } :root.s10-touch .k9-switch:checked::after { transform: translateX(20px); }
+:root.s10-touch .win-ctrl-btn { min-width: 44px; min-height: 36px; }
+/* teclado en pantalla */
+#s10-osk { position: fixed; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 99995; width: min(860px, 98vw); padding: 10px; border-radius: var(--e9-r-xl); background: var(--e9-glass-2); backdrop-filter: var(--e9-blur); border: 1px solid var(--e9-line-3); box-shadow: var(--e9-shadow-3); user-select: none; }
+.s10-osk-rows > div { display: flex; gap: 5px; margin-bottom: 5px; } .s10-osk-rows > div:last-child { margin-bottom: 0; }
+.s10-osk-rows button { flex: 1; min-height: 46px; border-radius: 9px; background: var(--e9-elev-2); border: 1px solid var(--e9-line-2); font-size: 17px; color: var(--e9-text); }
+.s10-osk-rows button:hover, .s10-osk-rows button:focus-visible { background: var(--accent-soft); border-color: var(--accent); }
+.s10-osk-rows button.on { background: var(--accent-ink); color: #fff; } .s10-osk-rows .w15 { flex: 1.5; } .s10-osk-rows .w4 { flex: 4; }
+:root.s10-oskon .window.active .window-body { padding-bottom: 240px; }
+
+/* ---------- 10. Utilidades compartidas por Configuración y apps 10.0 ---------- */
+.s10-kv { display: grid; grid-template-columns: minmax(130px, max-content) 1fr; gap: 6px 14px; font-size: 12.5px; }
+.s10-kv dt { color: var(--e9-muted); } .s10-kv dd { margin: 0; word-break: break-word; font-variant-numeric: tabular-nums; }
+.s10-note { display: flex; gap: 8px; align-items: flex-start; padding: 9px 11px; border-radius: var(--e9-r); font-size: 12px; background: var(--e9-info-soft); color: var(--e9-text-2); border: 1px solid color-mix(in srgb, var(--e9-info) 30%, transparent); }
+.s10-note.warn { background: var(--e9-warn-soft); border-color: color-mix(in srgb, var(--e9-warn) 35%, transparent); }
+.s10-note.ok { background: var(--e9-green-soft); border-color: color-mix(in srgb, var(--e9-green) 35%, transparent); }
+.s10-note .i9 { margin-top: 1px; flex-shrink: 0; }
+.s10-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.s10-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 99px; border: 1px solid var(--e9-line-2); background: var(--e9-elev); font-size: 12px; color: var(--e9-text-2); }
+.s10-chip.on { background: var(--accent-soft); border-color: var(--accent); color: var(--e9-text); }
+.s10-profiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+.s10-prof { text-align: left; padding: 10px 12px; border-radius: var(--e9-r); border: 1px solid var(--e9-line-2); background: var(--e9-elev); display: flex; flex-direction: column; gap: 4px; }
+.s10-prof b { font-size: 12.5px; } .s10-prof small { color: var(--e9-muted); font-size: 11px; line-height: 1.35; }
+.s10-prof.on { border-color: var(--accent); background: var(--accent-soft); }
+.s10-prof:hover { border-color: var(--e9-line-3); }
+@media (max-width: 760px) { #s10-snapfly { width: 92vw; } .s10-panel { width: calc(100vw - 16px); } .s10-cheats-g { columns: 1; } }
+
+/* ---------- 11. Paquetes de iconos (Configuración › Personalización y Administrador de temas) ---------- */
+:root[data-iconpack="circle"] .ico-tile { border-radius: 50% !important; }
+:root[data-iconpack="flat"] .ico-tile { background: var(--g1) !important; box-shadow: none !important; border-radius: 10px !important; }
+:root[data-iconpack="outline"] .ico-tile { background: transparent !important; box-shadow: inset 0 0 0 2px var(--g2) !important; }
+:root[data-iconpack="mono"] .ico-tile { background: var(--e9-elev-3) !important; box-shadow: inset 0 0 0 1px var(--e9-line-2) !important; }
+:root[data-iconpack="mono"] .ico-tile > b, :root[data-iconpack="mono"] .ico-tile > img { filter: grayscale(1) contrast(1.1); }
+/* ---------- 12. Opciones de desarrollador ---------- */
+#s10-fps { position: fixed; top: calc(var(--top-h) + 6px); left: 50%; transform: translateX(-50%); z-index: 100003; padding: 3px 10px; border-radius: 99px; background: rgba(0, 0, 0, .75); color: #8ff0c8; font: 600 11px var(--e9-mono); pointer-events: none; }
+html.s10-outline body * { outline: 1px solid rgba(232, 112, 159, .35) !important; }
+html.s10-devids .window-header[data-appid]::after { content: "#" attr(data-appid); font: 600 10.5px var(--e9-mono); color: var(--e9-pink); margin-right: 8px; opacity: .85; }
+.s10-noanim, .s10-noanim * { animation: none !important; transition: none !important; }
+
+/* ---------- Writer 10.0: ecuaciones, índice y bibliografía (atributos data-* conservados por el saneador) ---------- */
+span[data-eq^="m:"] { font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", "Times New Roman", serif; padding: 0 .1em; }
+span[data-eq="frac"] { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; margin: 0 .15em; font-size: .92em; line-height: 1.15; }
+span[data-eq="frac"] > span { display: block; padding: 0 .2em; } span[data-eq="frac"] > span:first-child { border-bottom: 1px solid currentColor; }
+span[data-eq="sqrt"] { white-space: nowrap; } span[data-eq="arg"] { border-top: 1px solid currentColor; padding: 0 .1em; }
+#word-doc-body span[data-cite] { background: rgba(52, 165, 130, .12); border-radius: 3px; padding: 0 2px; }
+#word-doc-body div[data-toc] { border: 1px dashed rgba(127, 127, 127, .45); border-radius: 6px; padding: 6px 12px; margin: .6em 0; } #word-doc-body div[data-toc] ol { list-style: none; padding-left: 0; } #word-doc-body li[data-toc-n] { cursor: pointer; } #word-doc-body li[data-toc-n]:hover { text-decoration: underline; }
+#word-doc-body div[data-biblio] p { padding-left: 2em; text-indent: -2em; }

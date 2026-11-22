@@ -1,0 +1,50 @@
+EISENKU OS 10.0 NEXT GENERATION
+===============================
+
+Plataforma de escritorio web con Linux Mode y Windows Mode, EISENKU App Center,
+navegador, archivos, 138 aplicaciones integradas (47 nuevas en 10.0), 28 juegos y el asistente
+Maestro Domingo. Conserva todo lo de 9.0 ENTERPRISE.
+
+CÓMO ABRIRLO
+ A) En tu PC (recomendado): instala Node.js 18 o superior (https://nodejs.org) y
+    - Windows: doble clic en INICIAR.bat
+    - macOS / Linux: sh INICIAR.sh
+    Se abre http://127.0.0.1:8080 (deja abierta la ventana del servidor).
+ B) Netlify: sube TODA la carpeta con Git o con la CLI (netlify.toml + netlify/functions).
+ C) Cloudflare Pages: sube TODA la carpeta (con _worker.js en la raíz).
+ No abras index.html con doble clic: ahí no existen el proxy, la IA ni el modo sin conexión.
+ Guía completa: docs/DESPLIEGUE.md
+
+OPCIONES (al principio de INICIAR.bat / INICIAR.sh)
+ PORT            puerto (8080; el proxy usa el siguiente)
+ HOST=0.0.0.0    abrirlo desde la Xbox, una tableta u otro equipo de tu red (solo redes de confianza)
+ AI_API_KEY      activa la IA de Domingo (API compatible con OpenAI). La clave nunca llega al navegador.
+ AI_BASE_URL, AI_MODEL, AI_ACCESS_CODE, AI_RATE_PER_MIN, AI_DAILY_LIMIT  (ver docs/DESPLIEGUE.md)
+
+SI ALGO FALLA
+ - "El puerto ya está en uso": EISENKU ya está abierto en otra ventana, o usa otro PORT.
+ - La interfaz no arranca bien: abre http://127.0.0.1:8080/?safe=1 (modo seguro).
+ - Más ayuda: EISENKU OS Handbook (F1 dentro de EISENKU) o docs/HANDBOOK.md.
+
+DOCUMENTACIÓN (carpeta docs/)
+ INFORME_TECNICO_10.md  informe de la versión 10.0: implementado, parcial, no soportado,
+                        errores conocidos, rendimiento y seguridad
+ AUDITORIA_10.md  auditoría previa y mapa de las 100 funciones
+ CHANGELOG.md     novedades de las versiones 10.0 y 9.0
+ FUNCIONES.md     lista completa de funciones y aplicaciones
+ LIMITACIONES.md  lo que EISENKU no hace o hace con restricciones
+ SEGURIDAD.md     auditoría de seguridad y cambios de configuración
+ DESPLIEGUE.md    instalación local, Netlify y Cloudflare Pages
+ HANDBOOK.md      el EISENKU OS Handbook (26 capítulos)
+ PRUEBAS.md       pruebas realizadas y resultados
+
+TUS DATOS
+ Todo se guarda en este navegador (localStorage e IndexedDB). EISENKU no tiene cuentas en la nube
+ ni envía estadísticas. Haz copias en Configuración › Copias de seguridad.
+ Tus datos de las versiones 8.0 y 9.0 se conservan al pasar a 10.0 (se crea un punto de restauración).
+
+PARA DESARROLLADORES
+ node tools/build-edge.mjs       regenera Netlify/Cloudflare tras cambiar lib/*.mjs
+ node tools/build-i18n.mjs       regenera los paquetes de idioma
+ node tools/build-integrity.mjs  regenera integrity.json tras editar la web
+ App de ejemplo de terceros: apps/hola-eisenku.eisenapp

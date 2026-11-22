@@ -1,0 +1,10 @@
+# EISENKU OS 9.0 ENTERPRISE · Netlify
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Variables (Site settings › Environment variables): AI_API_KEY, AI_BASE_URL, AI_MODEL,
+# AI_ACCESS_CODE (opcional), AI_RATE_PER_MIN, AI_DAILY_LIMIT. Las cabeceras de seguridad están en _headers.

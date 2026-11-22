@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0c0f">
+<meta name="color-scheme" content="dark light">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="application-name" content="EISENKU OS">
+<meta name="generator" content="EISEN OS PRIME 11.0 (eisen_osprime)">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="description" content="EISEN OS PRIME 11.0 (eisen_osprime): plataforma de escritorio web con modo Linux y modo Windows, EISENKU App Center, navegador, archivos, más de 130 apps, juegos, 20 idiomas y el asistente Maestro Domingo.">
+<title>EISEN OS PRIME 11.0</title>
+<!-- 9.0: arranque temprano (versión, perfil, migraciones reversibles, formatos regionales). Sin defer a propósito. -->
+<script src="js/os9/boot.js"></script>
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/eisenku8.css">
+<link rel="stylesheet" href="css/eisenku9.css">
+<link rel="stylesheet" href="css/eisenku10.css">
+<link rel="stylesheet" href="css/eisenku11.css">
+</head>
+<body>
+
+<!-- VIEWPORT PRINCIPAL DEL ESCRITORIO -->
+<div id="desktop-viewport">
+  <div id="screen-brightness-overlay"></div>
+  
+  <!-- Iconos principales del escritorio -->
+  <div id="desktop-icons">
+    <button class="desktop-icon-btn" data-launch="appcenter"><div class="ico-box">▦</div><span class="ico-label">Tienda Apps</span></button>
+    <button class="desktop-icon-btn" data-launch="explorer"><div class="ico-box">📁</div><span class="ico-label">Archivos</span></button>
+    <button class="desktop-icon-btn" data-launch="word"><div class="ico-box" style="color:#2b579a;">W</div><span class="ico-label">Writer Word</span></button>
+    <button class="desktop-icon-btn" data-launch="excel"><div class="ico-box" style="color:#217346;">X</div><span class="ico-label">Sheets Excel</span></button>
+    <button class="desktop-icon-btn" data-launch="pdf"><div class="ico-box" style="color:#e81123;">PDF</div><span class="ico-label">PDF Studio</span></button>
+    <button class="desktop-icon-btn" data-launch="arcade"><div class="ico-box">🎮</div><span class="ico-label">Videojuegos</span></button>
+    <button class="desktop-icon-btn" data-launch="browser"><div class="ico-box">🌐</div><span class="ico-label">Navegador</span></button>
+    <button class="desktop-icon-btn" id="btn-guide"><div class="ico-box">❓</div><span class="ico-label">Guía</span></button>
+    <button class="desktop-icon-btn" data-launch="music"><div class="ico-box">🎵</div><span class="ico-label">Música</span></button>
+    <button class="desktop-icon-btn" data-launch="terminal"><div class="ico-box">$_</div><span class="ico-label">Terminal</span></button>
+    <button class="desktop-icon-btn" data-launch="settings"><div class="ico-box">⚙️</div><span class="ico-label">Ajustes</span></button>
+  </div>
+</div>
+
+<!-- MENÚ CONTEXTUAL DEL ESCRITORIO -->
+<div id="context-menu">
+  <button class="ctx-item" id="ctx-new-doc"><span>📄</span> Nuevo Documento Word</button>
+  <button class="ctx-item" id="ctx-new-sheet"><span>📊</span> Nueva Hoja Excel</button>
+  <button class="ctx-item" id="ctx-new-folder"><span>📁</span> Nueva Carpeta</button>
+  <div class="ctx-sep"></div>
+  <button class="ctx-item" data-launch="wallpaper"><span>🖼️</span> Cambiar fondo de pantalla</button>
+  <button class="ctx-item" data-launch="settings"><span>⚙️</span> Configuración del sistema</button>
+</div>
+
+<!-- ==========================================================================
+     VENTANAS DE LAS APLICACIONES (WINDOWS)
+     ========================================================================== -->
+
+<!-- WORD / WRITER -->
+<section class="window" id="win-word" style="width:780px;height:550px;left:120px;top:40px;">
+  <div class="window-header"><div class="window-title-area"><span>📝</span> EISEN Writer · Procesador de Textos</div><div class="window-controls"><button class="win-ctrl-btn" data-act="min">🗕</button><button class="win-ctrl-btn" data-act="max">🗖</button><button class="win-ctrl-btn close" data-act="close">✕</button></div></div>
+  <div class="office-ribbon">
+    <button class="btn-secondary" data-fmt="bold"><b>B</b></button>
+    <button class="btn-secondary" data-fmt="italic"><i>I</i></button>
+    <button class="btn-secondary" data-fmt="underline"><u>U</u></button>
+    <button class="btn-secondary" data-fmt="justifyLeft">⇤</button>
+    <button class="btn-secondary" data-fmt="justifyCenter">≡</button>
+    <button class="btn-secondary" data-fmt="justifyRight">⇥</button>
+    <button class="btn-secondary" data-fmt="insertUnorderedList">• Lista</button>
+    <button class="btn-secondary" id="word-btn-table">▦ Tabla</button>
+    <button class="btn-secondary" id="word-btn-save">💾 Guardar</button>
+    <button class="btn-primary" id="word-btn-pdf">Exportar PDF</button>
+  </div>
+  <div class="editor-sheet-container">
+    <div id="word-doc-body" class="word-page-view" contenteditable="true" spellcheck="false">
+      <h1>Documento de Trabajo</h1>
+      <p>Bienvenido a <b>EISEN Writer Pro</b>. Puedes redactar, dar formato y exportar tus tareas e informes directamente a PDF o a tus archivos de EISENKU OS.</p>
+    </div>
+  </div>
+</section>
+
+<!-- EXCEL / SHEETS -->
+<section class="window" id="win-excel" style="width:820px;height:520px;left:140px;top:60px;">
+  <div class="window-header"><div class="window-title-area"><span>📊</span> EISEN Sheets · Hojas de Cálculo</div><div class="window-controls"><button class="win-ctrl-btn" data-act="min">🗕</button><button class="win-ctrl-btn" data-act="max">🗖</button><button class="win-ctrl-btn close" data-act="close">✕</button></div></div>
+  <div class="office-ribbon">
+    <button class="btn-secondary" id="sheet-btn-addrow">＋ Fila</button>
+    <button class="btn-secondary" id="sheet-btn-sum">Σ Suma rápida</button>
+    <button class="btn-secondary" id="sheet-btn-sort">⇅ Ordenar A-Z</button>
+    <button class="btn-secondary" id="sheet-btn-chart">📈 Gráfico</button>
+    <button class="btn-primary" id="sheet-btn-csv">Exportar CSV</button>
+  </div>
+  <div class="excel-formula-bar">
+    <span id="excel-active-cell" style="font-weight:700;color:var(--accent);min-width:40px;">A1</span>
+    <span>fx:</span>
+    <input type="text" id="excel-formula-input" class="input-text" style="flex:1;" placeholder="Escribe un valor o fórmula (=SUM(B1:B5))">
+  </div>
+  <div class="excel-grid-container">
+    <table class="excel-table" id="excel-main-table"><thead><tr id="excel-th-row"><th></th></tr></thead><tbody></tbody></table>
+  </div>
+</section>
+
+<!-- PDF STUDIO -->
+<section class="window" id="win-pdf" style="width:720px;height:500px;left:160px;top:80px;">
+  <div class="window-header"><div class="window-title-area"><span>📕</span> EISEN PDF Studio</div><div class="window-controls"><button class="win-ctrl-btn" data-act="min">🗕</button><button class="win-ctrl-btn" data-act="max">🗖</button><button class="win-ctrl-btn close" data-act="close">✕</button></div></div>
+  <div class="window-body ui-stack">
+    <div class="ui-row ui-between">
+      <input type="file" id="pdf-file-picker" accept="application/pdf" style="display:none">
+      <button class="btn-primary" data-click-target="#pdf-file-picker">📂 Cargar PDF del dispositivo</button>
+      <button class="btn-secondary" id="pdf-print-current">🖨️ Imprimir / Guardar</button>
+    </div>
+    <div style="flex:1;border:1px solid var(--shell-border);border-radius:var(--radius-md);overflow:hidden;background:#525659;display:flex;align-items:center;justify-content:center;">
+      <iframe id="pdf-viewer-frame" style="width:100%;height:100%;border:none;" title="Visor PDF"></iframe>
+      <div id="pdf-empty-placeholder" style="color:white;text-align:center;">Selecciona un archivo PDF para visualizarlo aquí.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ZONA DE VIDEOJUEGOS (ARCADE & CHESS & SHOOTER) -->
+<section class="window" id="win-arcade" style="width:760px;height:560px;left:100px;top:50px;">
+  <div class="window-header"><div class="window-title-area"><span>🎮</span> EISEN Gaming Hub · Videojuegos Integrados</div><div class="window-controls"><button class="win-ctrl-btn" data-act="min">🗕</button><button class="win-ctrl-btn" data-act="max">🗖</button><button class="win-ctrl-btn close" data-act="close">✕</button></div></div>
+  <div class="window-body ui-stack" style="padding:0;">
+    <div class="office-ribbon">
+      <button class="btn-secondary" id="arcade-tab-shooter">🚀 Space Shooter 2D</button>
+      <button class="btn-secondary" id="arcade-tab-chess">♟️ Ajedrez (IA / 2P)</button>
+      <button class="btn-secondary" id="arcade-tab-snake">🐍 Snake Retro</button>
+    </div>
+    <div style="flex:1;padding:12px;display:flex;align-items:center;justify-content:center;" id="arcade-screen-mount">
+      <!-- Módulo Space Shooter -->
+      <div id="arcade-mod-shooter" class="game-viewport-box" style="width:100%;">
+        <div class="ui-row ui-between" style="width:min(600px, 100%);">
+          <b>Puntuación: <span id="shooter-score">0</span></b>
+          <b>Vidas: <span id="shooter-lives">3</span></b>
+          <b>Récord: <span id="shooter-high">0</span></b>
+          <button class="btn-primary" id="shooter-btn-start">Iniciar / Reiniciar</button>
+        </div>
+        <canvas id="shooter-canvas" width="600" height="400"></canvas>
+        <span style="font-size:11px;color:var(--text-muted);">Usa A/D o Flechas para moverte; Espacio o Click para disparar. Táctil: toca a los lados y centro.</span>
+      </div>
+      <!-- Módulo Ajedrez -->
+      <div id="arcade-mod-chess" class="game-viewport-box" style="display:none;width:100%;">
+        <div class="ui-row" style="gap:10px;">
+          <span id="chess-status" style="font-weight:700;">Turno: Blancas</span>
+          <select id="chess-mode" class="input-text" style="width:180px;"><option value="ai">Vs Computadora</option><option value="2p">Dos Jugadores</option></select>
+          <button class="btn-primary" id="chess-restart">Nueva Partida</button>
+        </div>
+        <div id="chess-board-dom" class="chess-board-grid"></div>
+      </div>
+      <!-- Módulo Snake -->
+      <div id="arcade-mod-snake" class="game-viewport-box" style="display:none;width:100%;">
+        <div class="ui-row ui-between" style="width:min(400px, 100%);">
+          <b>Puntos: <span id="snake-score">0</span></b>
+          <button class="btn-primary" id="snake-restart">Iniciar</button>
+        </div>
+        <canvas id="snake-canvas" width="400" height="400" style="background:#000;border-radius:10px;"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CENTRO DE APLICACIONES (> 200 APPS) -->
+<section class="window" id="win-appcenter" style="width:840px;height:580px;left:80px;top:40px;">
+  <div class="window-header"><div class="window-title-area"><span>▦</span> EISEN Store · Catálogo de 200+ Aplicaciones</div><div class="window-controls"><button class="win-ctrl-btn" data-act="min">🗕</button><button class="win-ctrl-btn" data-act="max">🗖</button><button class="win-ctrl-btn close" data-act="close">✕</button></div></div>
+  <div class="window-body appcenter-layout">
+    <div class="ui-row">
+      <input type="text" id="appstore-search" class="input-text" placeholder="Buscar entre las más de 200 aplicaciones...">
+      <button class="btn-secondary" id="appstore-btn-custom">＋ Añadir App Web</button>
+    </div>
+    <div class="appcenter-tabs" id="appstore-categories">
+      <button class="btn-primary" data-cat="all">Todas</button>
+      <button class="btn-secondary" data-cat="Productividad">Productividad</button>
+      <button class="btn-secondary" data-cat="Desarrollo">Desarrollo</button>
+      <button class="btn-secondary" data-cat="Creatividad">Creatividad</button>
+      <button class="btn-secondary" data-cat="Multimedia">Multimedia</button>
+      <button class="btn-secondary" data-cat="Ciencia">Ciencia y Educación</button>
+      <button class="btn-secondary" data-cat="Juegos">Juegos</button>
+      <button class="btn-secondary" data-cat="Sistema">Sistema</button>
+    </div>
+    <div class="appcenter-grid" id="appstore-cards-container"></div>
+  </div>
+</section>
+
+<!-- EXPLORADOR DE ARCHIVOS PRO -->
+<section class="window" id="win-explorer" style="width:760px;height:480px;left:110px;top:70px;">
+  <div class="window-header"><div class="window-title-area"><span>📁</span> Explorador de Archivos · EISEN Files</div><div class="window-controls"><button class="win-ctrl-btn" data-act="min">🗕</button><button class="win-ctrl-btn" data-act="max">🗖</button><button class="win-ctrl-btn close" data-act="close">✕</button></div></div>
+  <div class="window-body explorer-container">
+    <div class="explorer-sidebar">
+      <button class="btn-secondary" style="text-align:left;width:100%;" data-folder="root">🏠 Este Equipo</button>
+      <button class="btn-secondary" style="text-align:left;width:100%;" data-folder="documents">📄 Documentos</button>
+      <button class="btn-secondary" style="text-align:left;width:100%;" data-folder="images">🖼️ Imágenes</button>
+      <button class="btn-secondary" style="text-align:left;width:100%;" data-folder="music">🎵 Música</button>
+      <button class="btn-secondary" style="text-align:left;width:100%;" data-folder="downloads">⬇️ Descargas</button>
+    </div>
+    <div class="explorer-main">
+      <div class="ui-row ui-between">
+        <span id="explorer-current-path" style="font-size:12px;font-weight:600;">/Este Equipo/Documentos</span>
+        <div class="ui-row">
+          <button class="btn-secondary" id="fs-btn-new-file">＋ Archivo</button>
+          <button class="btn-secondary" id="fs-btn-new-folder">＋ Carpeta</button>
+          <button class="btn-secondary" id="fs-btn-import">Importar</button>
+          <button class="btn-secondary" id="fs-btn-url">🔗 URL</button>
+          <input type="file" id="fs-real-picker" style="display:none;" multiple>
+        </div>
+      </div>
+      <div id="explorer-items-list" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:4px;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- REPRODUCTOR DE MÚSICA PERSISTENTE -->
+<section class="window" id="win-music" style="width:560px;height:640px;left:180px;top:90px;">
+  <div class="window-header"><div class="window-title-area"><span>🎵</span> Reproductor de Audio</div><div class="window-controls"><button class="win-ctrl-btn" data-act="min">🗕</button><button class="win-ctrl-btn" data-act="max">🗖</button><button class="win-ctrl-btn close" data-act="close">✕</button></div></div>
+  <div class="window-body player-container">
+    <div class="player-art" id="player-disk-art">🎧</div>
+    <div>
+      <h3 id="player-track-name" style="font-size:15px;">EISEN Synthwave (Sintetizador)</h3>
+      <p id="player-track-artist" style="font-size:12px;color:var(--text-muted);">Sonido Procedimental WebAudio</p>
+    </div>
+    <div style="width:100%;">
+      <input type="range" id="player-seek-bar" value="0" min="0" max="100" style="width:100%;accent-color:var(--accent);">
+    </div>
+    <div class="ui-row" style="gap:20px;font-size:20px;">
+      <button id="p-prev">⏮</button>
+      <button class="btn-primary" id="p-play-main" style="width:44px;height:44px;border-radius:50%;padding:0;">▶</button>
+      <button id="p-next">⏭</button>
+    </div>
+    <div class="ui-row" style="width:80%;gap:10px;">
+      <span>🔈</span>
+      <input type="range" id="player-vol-slider" min="0" max="1" step="0.05" value="0.8" style="flex:1;accent-color:var(--accent);">
+      <span>🔊</span>
+    </div>
+    <input type="file" id="audio-file-input" accept="audio/*" multiple style="display:none;">
+    <button class="btn-secondary" data-click-target="#audio-file-input">📂 Cargar mis canciones</button>
+  </div>
+</section>
+
+<!-- NAVEGADOR WEB -->
+<section class="window" id="win-browser" style="width:980px;height:620px;left:110px;top:40px;">
+  <div class="window-header"><div class="window-title-area"><span id="eb-title">🌐 Navegador EISEN</span></div><div class="window-controls"><button class="win-ctrl-btn" data-act="min">🗕</button><button class="win-ctrl-btn" data-act="max">🗖</button><button class="win-ctrl-btn close" data-act="close">✕</button></div></div>
+  <div class="eb-tabs" id="eb-tabs"></div>
+  <div class="eb-toolbar">
+    <button class="eb-btn" id="nav-btn-back" title="Atrás">⇦</button>
+    <button class="eb-btn" id="nav-btn-fwd" title="Adelante">⇨</button>
+    <button class="eb-btn" id="nav-btn-reload" title="Recargar / detener">↻</button>
+    <button class="eb-btn" id="nav-btn-home" title="Página de inicio">🏠</button>
+    <input type="text" id="nav-url-input" class="input-text eb-omni" placeholder="Busca lo que quieras o escribe una dirección" autocomplete="off" spellcheck="false">
+    <button class="btn-primary" id="nav-btn-go">Ir</button>
+    <button class="eb-btn" id="nav-btn-star" title="Añadir a favoritos (Ctrl+D)">☆</button>
+    <button class="eb-btn" id="nav-btn-read" title="Modo lectura: muestra solo el texto e imágenes de la página">📖</button>
+    <button class="eb-btn" id="nav-btn-ext" title="Abrir esta página en una pestaña real de tu navegador">↗</button>
+    <button class="eb-btn" id="nav-btn-menu" title="Menú del navegador">⋮</button>
+    <select id="eb-switch" class="input-text eb-switch" title="Cambiar de navegador"></select>
+  </div>
+  <div id="eb-menu" class="eb-menu" hidden>
+    <button data-m="tab">＋ Nueva pestaña <kbd>Ctrl+T</kbd></button>
+    <button data-m="dup">⧉ Duplicar pestaña</button>
+    <button data-m="hist">🕘 Historial <kbd>Ctrl+H</kbd></button>
+    <button data-m="marks">⭐ Favoritos</button>
+    <button data-m="native">🔎 Cambiar estilo de resultados (EISEN / buscador)</button>
+    <button data-m="clear">🧹 Borrar historial y datos de sitios</button>
+  </div>
+  <div id="eb-note" class="eb-note" hidden></div>
+  <div class="eb-loadbar" id="eb-loadbar"></div>
+  <div class="eb-views" id="eb-views"></div>
+</section>
+
+<!-- TERMINAL EDUCATIVA -->
+<section class="window" id="win-terminal" style="width:680px;height:420px;left:150px;top:80px;">
+  <div class="window-header"><div class="window-title-area"><span>⌨️</span> Terminal</div><div class="window-controls"><button class="win-ctrl-btn" data-act="min">🗕</button><button class="win-ctrl-btn" data-act="max">🗖</button><button class="win-ctrl-btn close" data-act="close">✕</button></div></div>
+  <div class="window-body" style="padding:0;">
+    <div class="terminal-shell">
+      <div class="term-history" id="term-log">EISEN OS PRIME 11.0<br>Terminal de EISENKU (los comandos actúan sobre el sistema web).<br>Escribe 'help' para ver la lista de comandos disponibles.<br><br></div>
+      <div class="ui-row">
+        <span style="color:#0078d4;">eisen@desktop:~$</span>
+        <input type="text" id="term-input-cmd" style="flex:1;background:transparent;border:none;outline:none;color:#fff;font-family:inherit;" autofocus>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONFIGURACIÓN AVANZADA (SETTINGS) -->
+<section class="window" id="win-settings" style="width:680px;height:500px;left:160px;top:70px;">
+  <div class="window-header"><div class="window-title-area"><span>⚙️</span> Configuración</div><div class="window-controls"><button class="win-ctrl-btn" data-act="min">🗕</button><button class="win-ctrl-btn" data-act="max">🗖</button><button class="win-ctrl-btn close" data-act="close">✕</button></div></div>
+  <div class="window-body ui-stack">
+    <div class="ui-card ui-stack">
+      <b>Personalización & Aspecto</b>
+      <div class="ui-grid-2">
+        <div>
+          <label style="font-size:11px;color:var(--text-muted);">Tema General</label>
+          <select id="cfg-theme" class="input-text">
+            <option value="dark">Oscuro</option>
+            <option value="light">Claro</option>
+            <option value="midnight">Midnight OLED</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--text-muted);">Color de Acento</label>
+          <input type="color" id="cfg-accent" value="#0078d4" style="width:100%;height:35px;border:none;background:transparent;">
+        </div>
+      </div>
+    </div>
+    <div class="ui-card ui-stack">
+      <b>Fondo de Pantalla</b>
+      <div class="ui-row">
+        <select id="cfg-wallpaper" class="input-text" style="flex:1;">
+          <option value="flow">Windows 11 Flow (Azul)</option>
+          <option value="dark-flow">Windows 11 Dark Ribbon</option>
+          <option value="nature">Paisaje Aurora</option>
+          <option value="cyber">Cyberpunk Neo</option>
+        </select>
+        <button class="btn-primary" id="cfg-btn-custom-bg">Subir imagen</button>
+        <input type="file" id="cfg-file-bg" accept="image/*" style="display:none">
+      </div>
+      <div class="ui-row">
+        <input type="text" id="cfg-wp-url" class="input-text" style="flex:1;" placeholder="URL de la imagen (https://...)">
+        <button class="btn-primary" id="cfg-wp-url-btn">Aplicar URL</button>
+      </div>
+      <p style="font-size:11px;color:var(--text-muted);">También puedes arrastrar una imagen (o un enlace de imagen) sobre el escritorio o esta ventana.</p>
+    </div>
+    <div class="ui-card ui-stack">
+      <b>Idioma y archivos</b>
+      <div class="ui-grid-2">
+        <div>
+          <label style="font-size:11px;color:var(--text-muted);">Idioma</label>
+          <select id="cfg-lang" class="input-text"></select>
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--text-muted);">Guardado de archivos</label>
+          <select id="cfg-save-mode" class="input-text">
+            <option value="both">Descargar y guardar copia en EISEN</option>
+            <option value="device">Solo descargar</option>
+            <option value="vault">Solo guardar dentro de EISEN (sin descargas)</option>
+          </select>
+        </div>
+      </div>
+      <div class="ui-row"><button class="btn-secondary" id="cfg-btn-guide">Ver guía de inicio</button></div>
+      <p style="font-size:11px;color:var(--text-muted);">Si tu dispositivo no permite descargar, elige "Solo guardar dentro de EISEN": los archivos se guardan en Archivos › Descargas y los abres desde ahí.</p>
+    </div>
+    <div class="ui-card ui-stack">
+      <b>Navegador Web</b>
+      <div class="ui-grid-2">
+        <div>
+          <label style="font-size:11px;color:var(--text-muted);">Navegador activo</label>
+          <select id="cfg-browser" class="input-text"></select>
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--text-muted);">Modo de carga</label>
+          <select id="cfg-proxy-mode" class="input-text">
+            <option value="auto">Automático (recomendado)</option>
+            <option value="on">Solo proxy propio</option>
+            <option value="off">Directo (sin proxy)</option>
+          </select>
+        </div>
+      </div>
+      <input type="text" id="cfg-proxy-url" class="input-text" placeholder="Dirección del proxy (vacío = /proxy?url= incluido en el proyecto)">
+      <p style="font-size:11px;color:var(--text-muted);" id="cfg-browser-desc"></p>
+    </div>
+    <div class="ui-card ui-stack">
+      <b>Ventanas e Inicio</b>
+      <div class="ui-row"><button class="btn-secondary" id="cfg-btn-reset-win">Restablecer tamaño de ventanas</button><button class="btn-secondary" id="cfg-btn-start-folders">Carpetas del Inicio</button></div>
+      <p style="font-size:11px;color:var(--text-muted);">Arrastra los bordes o esquinas de cualquier ventana para hacerla más pequeña o más grande. Crea carpetas con tus apps en el menú Inicio con ＋ Carpeta.</p>
+    </div>
+    <div class="ui-card ui-stack">
+      <b>Aplicaciones vinculadas</b>
+      <label style="font-size:11px;color:var(--text-muted);">Clave API de YouTube (opcional)</label>
+      <input type="password" id="cfg-yt-key" class="input-text" placeholder="AIza..." autocomplete="off">
+      <label style="font-size:11px;color:var(--text-muted);">Spotify Client ID (opcional)</label>
+      <input type="text" id="cfg-sp-client" class="input-text" placeholder="Client ID" autocomplete="off">
+      <p style="font-size:11px;color:var(--text-muted);" id="cfg-sp-redirect"></p>
+      <div class="ui-row"><button class="btn-secondary" id="cfg-btn-clear-sites">Borrar reglas por sitio</button></div>
+      <p style="font-size:11px;color:var(--text-muted);">La clave de YouTube activa la búsqueda oficial. El Client ID de Spotify permite iniciar sesión, buscar y ver tus playlists: créalo en developer.spotify.com y registra como Redirect URI la dirección de arriba.</p>
+    </div>
+    <div class="ui-card ui-stack">
+      <b>Almacenamiento Local & Sistema</b>
+      <p style="font-size:11px;color:var(--text-muted);" id="cfg-storage-info">Calculando uso de memoria...</p>
+      <div class="ui-row">
+        <button class="btn-secondary" id="cfg-btn-backup">Exportar Respaldo JSON</button>
+        <button class="btn-secondary" id="cfg-btn-restore">Restaurar Copia</button>
+        <button class="btn-secondary" id="cfg-btn-reset" style="color:#ff647c;">Restablecer Sistema</button>
+        <input type="file" id="cfg-file-restore" style="display:none;" accept=".json">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     MENÚ INICIO, QUICK SETTINGS & BARRA DE TAREAS
+     ========================================================================== -->
+
+<!-- MENÚ INICIO FLYOUT -->
+<div id="start-menu-panel">
+  <div class="start-search-box">
+    <input type="text" id="start-search-input" class="start-search-input" placeholder="Escribe aquí para buscar apps o archivos...">
+  </div>
+  <div class="start-body">
+    <div class="start-section-title"><span>Anclado</span><button class="btn-secondary" style="padding:2px 8px;font-size:10px;" data-launch="appcenter">Todas las apps ➔</button></div>
+    <div class="start-grid-apps" id="start-pinned-grid"></div>
+    <div class="start-section-title"><span>Recomendado</span></div>
+    <div class="ui-stack" id="start-recents-list"></div>
+  </div>
+  <div class="start-footer">
+    <div class="user-profile"><div class="user-avatar">E</div><span>Eisen Usuario</span></div>
+    <button class="btn-secondary" id="sys-btn-restart" title="Reiniciar sesión">⏻</button>
+  </div>
+</div>
+
+<!-- ACTION CENTER / QUICK SETTINGS PANEL -->
+<div id="action-center">
+  <div class="quick-tiles-grid">
+    <button class="quick-tile active" id="qt-wifi"><span class="qt-icon">📶</span><span>Wi-Fi</span></button>
+    <button class="quick-tile active" id="qt-bt"><span class="qt-icon">ᛒ</span><span>Bluetooth</span></button>
+    <button class="quick-tile" id="qt-dark"><span class="qt-icon">🌙</span><span>Oscuro</span></button>
+  </div>
+  <div class="quick-music-card">
+    <div class="qm-header"><span class="qm-title" id="qc-track-title">EISEN Synthwave</span><span style="font-size:10px;">En reproducción</span></div>
+    <div class="qm-controls">
+      <button id="qc-prev">⏮</button>
+      <button id="qc-play">▶</button>
+      <button id="qc-next">⏭</button>
+    </div>
+  </div>
+  <div class="slider-group">
+    <div class="slider-row"><span>☀️</span><input type="range" id="qc-brightness" min="0" max="0.8" step="0.05" value="0"></div>
+    <div class="slider-row"><span>🔊</span><input type="range" id="qc-volume" min="0" max="1" step="0.05" value="0.8"></div>
+  </div>
+</div>
+
+<!-- BARRA DE TAREAS INFERIOR -->
+<footer id="taskbar">
+  <div class="taskbar-section" id="taskbar-left">
+    <button class="tb-btn" title="Widgets & Tiempo">⛅ 24°C</button>
+  </div>
+  
+  <div id="taskbar-center">
+    <button class="tb-btn" id="tb-start-trigger" title="Inicio" style="font-size:20px;color:var(--accent);">⊞</button>
+    <button class="tb-btn" title="Buscar" data-launch="appcenter">🔍</button>
+    <button class="tb-btn" data-launch="explorer" title="Explorador de Archivos">📁</button>
+    <button class="tb-btn" data-launch="word" title="EISEN Writer">📝</button>
+    <button class="tb-btn" data-launch="excel" title="EISEN Sheets">📊</button>
+    <button class="tb-btn" data-launch="browser" title="Navegador Web">🌐</button>
+    <button class="tb-btn" data-launch="arcade" title="Zona Gaming">🎮</button>
+    <button class="tb-btn" data-launch="music" title="Música">🎵</button>
+  </div>
+  
+  <div class="taskbar-section" id="taskbar-right">
+    <div class="systray-pill" id="systray-quick-btn" title="Configuración rápida">
+      <span>📶</span><span>🔊</span><span>🔋 98%</span>
+    </div>
+    <div class="systray-pill" id="systray-clock">
+      <div id="clock-time">12:00</div>
+      <div id="clock-date" style="font-size:9px;color:var(--text-muted);">01/01/2026</div>
+    </div>
+  </div>
+</footer>
+
+<!-- ==========================================================================
+     MOTOR PRINCIPAL DE JAVASCRIPT
+     ========================================================================== -->
+<script src="js/i18n.js" defer></script>
+<script src="js/app.js" defer></script>
+<script src="js/core.js" defer></script>
+<script src="js/os9/kernel.js" defer></script>
+<script src="js/extras.js" defer></script>
+<script src="js/guide.js" defer></script>
+<script src="js/apps-office.js" defer></script>
+<script src="js/apps-media.js" defer></script>
+<script src="js/games.js" defer></script>
+<script src="js/games2.js" defer></script>
+<script src="js/store.js" defer></script>
+<script src="js/domingo.js" defer></script>
+<script src="js/layout.js" defer></script>
+<script src="js/desktop.js" defer></script>
+<script src="js/shell.js" defer></script>
+<!-- ====================== EISENKU OS 9.0 ENTERPRISE (base) ====================== -->
+<script src="js/os9/i18n9.js" defer></script>
+<script src="js/os9/files9.js" defer></script>
+<script src="js/os9/shell9.js" defer></script>
+<script src="js/os9/settings9.js" defer></script>
+<script src="js/os9/appcenter.js" defer></script>
+<script src="js/os9/browser9.js" defer></script>
+<script src="js/os9/office9.js" defer></script>
+<script src="js/os9/catalog9.js" defer></script>
+<script src="js/os9/start9.js" defer></script>
+<!-- ================== EISENKU OS 10.0 NEXT GENERATION ================== -->
+<!-- Núcleo, catálogo, escritorio, accesibilidad y Configuración 10.0 (las apps nuevas y Archivos 10.0 se cargan bajo demanda) -->
+<script src="js/os10/core10.js" defer></script>
+<script src="js/os10/catalog10.js" defer></script>
+<script src="js/os10/shell10.js" defer></script>
+<script src="js/os10/a11y10.js" defer></script>
+<script src="js/os10/settings10.js" defer></script>
+<!-- ======================= EISEN OS PRIME 11.0 ======================= -->
+<!-- Núcleo PRIME (persistencia, sincronización, instalación, descargas virtuales) e interfaz PRIME; las apps PRIME se cargan bajo demanda -->
+<script src="js/os11/prime11.js" defer></script>
+<script src="js/os11/shell11.js" defer></script>
+</body>
+</html>

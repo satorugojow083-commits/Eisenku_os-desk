@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex">
+<title>EISEN OS PRIME · Recuperación</title>
+<style>
+  :root { --bg: #0b0c0f; --card: #14171c; --line: rgba(255,255,255,.09); --text: #e9ebef; --muted: #9aa0a8; --green: #34a582; --pink: #e8709f; }
+  * { box-sizing: border-box; } html, body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, "Segoe UI", Roboto, sans-serif; overscroll-behavior: none; }
+  main { max-width: 820px; margin: 0 auto; padding: max(18px, env(safe-area-inset-top)) 16px 40px; }
+  h1 { font-size: 22px; margin: 6px 0 2px; } h1 span { color: var(--pink); } p.sub { color: var(--muted); margin: 0 0 16px; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; }
+  h2 { font-size: 15px; margin: 0 0 6px; } small, .muted { color: var(--muted); }
+  button, a.btn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 10px 16px; margin: 6px 6px 0 0; border-radius: 12px; border: 1px solid var(--line); background: #1c2027; color: var(--text); font: inherit; cursor: pointer; text-decoration: none; }
+  button.pri { background: var(--green); border-color: var(--green); color: #fff; font-weight: 600; } button.dng { border-color: var(--pink); color: var(--pink); }
+  button:focus-visible, a.btn:focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; }
+  #log { white-space: pre-wrap; font: 12px/1.5 ui-monospace, Consolas, monospace; color: var(--muted); max-height: 220px; overflow: auto; }
+  .kv { display: grid; grid-template-columns: auto 1fr; gap: 2px 14px; font-size: 13px; } .kv b { font-weight: 600; }
+</style>
+</head>
+<body>
+<main>
+  <h1>EISEN OS <span>PRIME</span> · Recuperación</h1>
+  <p class="sub">Esta página funciona aunque la interfaz de EISEN no arranque. No envía nada a Internet.</p>
+  <section><h2>Estado</h2><div class="kv" id="state">Comprobando…</div></section>
+  <section><h2>1. Guarda una copia de todo</h2><p class="muted">Ajustes, apps, escritorio, datos de apps y tus archivos del perfil activo, en el formato de copia de seguridad de EISEN (se restaura en Configuración › Copias de seguridad o en Transferir › Recibir).</p><button class="pri" id="bk">⬇ Descargar copia completa</button><button id="bkLight">⬇ Solo ajustes (sin archivos)</button></section>
+  <section><h2>2. Repara</h2><button id="fix">🩺 Reparar datos dañados</button><button id="mirror">🛟 Restaurar desde el espejo PRIME</button><button id="ui">🪟 Restablecer la interfaz (conserva apps y archivos)</button><button id="plugins">🧩 Desactivar plugins</button><button id="sw">♻️ Limpiar el modo sin conexión</button></section>
+  <section><h2>3. Vuelve a EISEN</h2><a class="btn pri" href="./?safe=1">Abrir en modo seguro</a><a class="btn" href="./">Abrir normalmente</a></section>
+  <section><h2>Registro</h2><div id="log"></div></section>
+</main>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var log = function (m) { $('log').textContent = new Date().toLocaleTimeString() + '  ' + m + '\n' + $('log').textContent; };
+  var LS = null; try { LS = window.localStorage; LS.getItem('x'); } catch (e) { LS = null; }
+  var keys = function () { var o = []; if (!LS) return o; for (var i = 0; i < LS.length; i++) { var k = LS.key(i); if (k && /^eisen_/.test(k)) o.push(k); } return o; };
+  var jsonOk = function (v) { try { JSON.parse(v); return true; } catch (e) { return false; } };
+  var get = function (k, d) { try { var v = LS.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } };
+  var active = get('eisenku_sys_active', 'default') || 'default';
+  var pid = String(active).replace(/[^\w-]/g, '');
+  var vaultName = active === 'default' ? 'eisen_vault' : 'eisen_vault_' + pid;
+  var openDb = function (name) { return new Promise(function (res, rej) { try { var r = indexedDB.open(name); r.onsuccess = function () { res(r.result); }; r.onerror = function () { rej(r.error); }; r.onupgradeneeded = function () { /* no existe: se crea vacía */ }; } catch (e) { rej(e); } }); };
+  var all = function (db, store) { return new Promise(function (res) { try { if (!db.objectStoreNames.contains(store)) return res([]); var q = db.transaction(store, 'readonly').objectStore(store).getAll(); q.onsuccess = function () { res(q.result || []); }; q.onerror = function () { res([]); }; } catch (e) { res([]); } }); };
+  var b64 = function (blob) { return new Promise(function (res) { var r = new FileReader(); r.onload = function () { res(String(r.result).split(',')[1] || ''); }; r.onerror = function () { res(''); }; r.readAsDataURL(blob); }); };
+  function state() {
+    var ks = keys(), size = 0, bad = 0; ks.forEach(function (k) { var v = LS.getItem(k) || ''; size += v.length * 2; if (!jsonOk(v)) bad++; });
+    var prof = get('eisenku_sys_profiles', []) || [];
+    $('state').innerHTML = '<b>Almacenamiento local</b><span>' + (LS ? ks.length + ' claves · ' + (size / 1024).toFixed(0) + ' KB' : 'NO disponible (navegación privada o bloqueado)') + '</span><b>Claves dañadas</b><span>' + bad + '</span><b>Perfil activo</b><span>' + (prof.filter(function (p) { return p.id === active; })[0] || { name: active }).name + ' (' + prof.length + ' perfiles)</span><b>Versión instalada</b><span>' + get('eisen_os9_last_version', '—') + '</span><b>Modo sin conexión</b><span>' + ('serviceWorker' in navigator ? 'disponible' : 'no disponible') + '</span>';
+  }
+  async function backup(withFiles) {
+    try {
+      var data = {}; keys().forEach(function (k) { data[k] = LS.getItem(k); });
+      var files = [];
+      if (withFiles) { var db = await openDb(vaultName); var list = await all(db, 'files'); for (var i = 0; i < list.length; i++) { var f = list[i]; if (!f || !f.blob) continue; files.push({ id: f.id, name: f.name, type: f.type, size: f.size, folder: f.folder, date: f.date, trash: f.trash || null, fav: !!f.fav, b64: await b64(f.blob) }); } db.close(); }
+      var body = JSON.stringify({ app: 'EISENKU OS', format: 2, version: get('eisen_os9_last_version', '11.0.0'), edition: 'PRIME', created: new Date().toISOString(), profile: active, data: data, files: files, recovery: true });
+      var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([body], { type: 'application/json' })); a.download = 'EISEN_PRIME_recuperacion_' + new Date().toISOString().slice(0, 10) + '.json'; document.body.appendChild(a); a.click(); a.remove();
+      log('Copia creada: ' + Object.keys(data).length + ' claves, ' + files.length + ' archivos (' + (body.length / 1048576).toFixed(1) + ' MB). Si tu dispositivo no descarga archivos (Xbox), usa «Restaurar desde el espejo» o el modo seguro y exporta desde Transferir.');
+    } catch (e) { log('No se pudo crear la copia: ' + (e && e.message || e)); }
+  }
+  $('bk').onclick = function () { backup(true); }; $('bkLight').onclick = function () { backup(false); };
+  $('fix').onclick = async function () {
+    var mirror = {}; try { var db = await openDb('eisenprime_' + pid); (await all(db, 'kv')).forEach(function (x) { mirror[x.k] = x.v; }); db.close(); } catch (e) { /* sin espejo */ }
+    var n = 0, m = 0; keys().forEach(function (k) { var v = LS.getItem(k) || ''; if (jsonOk(v)) return; if (mirror[k] && jsonOk(mirror[k])) { LS.setItem(k, mirror[k]); m++; } else { LS.removeItem(k); n++; } });
+    log('Reparación: ' + m + ' claves recuperadas del espejo, ' + n + ' eliminadas.'); state();
+  };
+  $('mirror').onclick = async function () {
+    if (!confirm('¿Sustituir los ajustes actuales por la copia del espejo PRIME? Tus archivos no se tocan.')) return;
+    try { var db = await openDb('eisenprime_' + pid); var l = await all(db, 'kv'); db.close(); if (!l.length) return log('El espejo está vacío para este perfil.'); var n = 0; l.forEach(function (x) { try { LS.setItem(x.k, x.v); n++; } catch (e) { /* sin espacio */ } }); log('Restauradas ' + n + ' claves desde el espejo.'); state(); } catch (e) { log('No se pudo leer el espejo: ' + (e && e.message || e)); }
+  };
+  $('ui').onclick = function () {
+    var UI = /^eisen_(os9_layout_last|os10_panels|os9_widgets|prime_session|prime_bootloop|os9_prefs|os10_disp_active|os10_theme_vars|os9_desks|os9_desk_names|prime_easy|prime_easy_prev|os10_iconpack|customWallpaper)$/;
+    var n = 0; keys().forEach(function (k) { if (UI.test(k)) { LS.removeItem(k); n++; } }); LS.setItem('eisen_wp', JSON.stringify('e9-noir'));
+    log('Interfaz restablecida (' + n + ' ajustes de ventanas, paneles, widgets y apariencia). Apps, escritorio y archivos se conservan.'); state();
+  };
+  $('plugins').onclick = function () { var l = get('eisen_prime_plugins', []) || []; l.forEach(function (p) { p.enabled = false; }); LS.setItem('eisen_prime_plugins', JSON.stringify(l)); log(l.length + ' plugins desactivados.'); };
+  $('sw').onclick = async function () {
+    try { var n = 0; if ('serviceWorker' in navigator) { var regs = await navigator.serviceWorker.getRegistrations(); for (var i = 0; i < regs.length; i++) { await regs[i].unregister(); n++; } } var c = 0; if (window.caches) { var ks = await caches.keys(); for (var j = 0; j < ks.length; j++) { if (/^eisenku-/.test(ks[j])) { await caches.delete(ks[j]); c++; } } } log('Service Worker: ' + n + ' registros quitados, ' + c + ' cachés borradas. Se volverá a instalar al abrir EISEN.'); } catch (e) { log('Error: ' + (e && e.message || e)); }
+  };
+  state(); log('Lista. Perfil activo: ' + active);
+})();
+</script>
+</body>
+</html>
