@@ -1,0 +1,9 @@
+# EISENKU Technology · Netlify: sitio estático (página de la empresa, EISEN OS en /os/ y descargas). Sin funciones: Netlify no permite proxies abiertos.
+[build]
+  publish = "."
+  command = ""
+
+[[redirects]]
+  from = "/os"
+  to = "/os/"
+  status = 301
