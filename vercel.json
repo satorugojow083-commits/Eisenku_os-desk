@@ -1,6 +1,4 @@
 {
- "cleanUrls": false,
- "trailingSlash": false,
  "redirects": [
   {
    "source": "/os",
