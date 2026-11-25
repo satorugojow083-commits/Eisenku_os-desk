@@ -1679,7 +1679,7 @@ ${extraCss}</style></head><body>${body}${EB_PAGEJS}</body></html>`;
       termHistory.innerHTML += virtualFS.map(f => `  ${ebEsc(f.name)} (${ebEsc(f.size)})`).join('\n') + '\n';
     } else if (c === 'neofetch') {
       termHistory.innerHTML += `
-  .---.      OS: EISEN OS PRIME 11.0 (eisen_osprime)
+  .---.      OS: EISEN OS PRIME 11.1 (eisen_osprime)
  /     \\     Kernel: HTML5 / ES6 Web Desktop
 | () () |    Shell: EISEN Terminal Pro
  \\  _  /     Apps: catálogo real en EISEN Store

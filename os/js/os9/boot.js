@@ -16,7 +16,7 @@
   K.edition = 'PRIME';
   K.build = '2026.11.25';
   K.codename = 'Prime';
-  K.label = 'EISEN OS PRIME 11.0';
+  K.label = 'EISEN OS PRIME 11.1';
   K.product = 'eisen_osprime';
   K.schema = 1;
   // 10.0: versión y novedades de las apps integradas que cambian en esta versión (App Center › Actualizaciones)

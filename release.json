@@ -4,11 +4,11 @@
  "apk": {
   "file": "descargas/EISEN_OS_PRIME_11.1.0.apk",
   "bytes": 2943178,
-  "sha256": "07e366ae3f7b4bc7c778489be20f5737d0b260975ebe4cc6c19893175e1b8a93"
+  "sha256": "4255360242d809ea03ea86a10fe367de24c4e9cf5cd51982be3ac5ddbc4e70de"
  },
  "pc": {
   "file": "descargas/EISEN_OS_PRIME_11.1.0_PC.zip",
   "bytes": 2715140,
-  "sha256": "c1286374363883a9d34d3c68b55df3ab104a15a22557ed334ebfd1c8ea940a61"
+  "sha256": "eeea6a27a277c8628329eed7410fcc4238367fc4a2e3d610245b06af7cd5ca05"
  }
 }

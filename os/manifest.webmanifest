@@ -2,7 +2,7 @@
   "name": "EISEN OS PRIME",
   "short_name": "EISEN PRIME",
   "id": "./?eisen_osprime",
-  "description": "EISEN OS PRIME 11.0 (eisen_osprime): escritorio web con modo Linux y Windows, App Center con instalación virtual, descargas dentro de EISEN, transferencia entre dispositivos, navegador, archivos, juegos y el asistente Maestro Domingo.",
+  "description": "EISEN OS PRIME 11.1 (eisen_osprime): escritorio web con modo Linux y Windows, App Center con instalación virtual, descargas dentro de EISEN, transferencia entre dispositivos, navegador, archivos, juegos y el asistente Maestro Domingo.",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",
