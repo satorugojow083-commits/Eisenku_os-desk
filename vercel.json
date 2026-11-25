@@ -1,0 +1,94 @@
+{
+ "cleanUrls": false,
+ "trailingSlash": false,
+ "redirects": [
+  {
+   "source": "/os",
+   "destination": "/os/",
+   "permanent": true
+  }
+ ],
+ "headers": [
+  {
+   "source": "/os/(.*)",
+   "headers": [
+    {
+     "key": "Content-Security-Policy",
+     "value": "default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https: blob:; style-src 'self' 'unsafe-inline' https:; img-src 'self' https: http: data: blob:; media-src 'self' https: http: data: blob: mediastream:; font-src 'self' https: data:; connect-src 'self' https: http: wss: data: blob:; frame-src 'self' https: http: data: blob: about:; worker-src 'self' blob:; object-src 'none'; form-action 'self' https: http:; frame-ancestors 'self'"
+    },
+    {
+     "key": "X-Content-Type-Options",
+     "value": "nosniff"
+    },
+    {
+     "key": "Referrer-Policy",
+     "value": "strict-origin-when-cross-origin"
+    },
+    {
+     "key": "X-Frame-Options",
+     "value": "SAMEORIGIN"
+    },
+    {
+     "key": "Permissions-Policy",
+     "value": "browsing-topics=(), interest-cohort=()"
+    },
+    {
+     "key": "Cross-Origin-Opener-Policy",
+     "value": "same-origin-allow-popups"
+    }
+   ]
+  },
+  {
+   "source": "/os/version.json",
+   "headers": [
+    {
+     "key": "Access-Control-Allow-Origin",
+     "value": "*"
+    },
+    {
+     "key": "Cache-Control",
+     "value": "no-cache"
+    }
+   ]
+  },
+  {
+   "source": "/os/sw.js",
+   "headers": [
+    {
+     "key": "Cache-Control",
+     "value": "no-cache"
+    }
+   ]
+  },
+  {
+   "source": "/descargas/(.*)",
+   "headers": [
+    {
+     "key": "Content-Disposition",
+     "value": "attachment"
+    },
+    {
+     "key": "X-Content-Type-Options",
+     "value": "nosniff"
+    }
+   ]
+  },
+  {
+   "source": "/((?!os/).*)",
+   "headers": [
+    {
+     "key": "X-Content-Type-Options",
+     "value": "nosniff"
+    },
+    {
+     "key": "Referrer-Policy",
+     "value": "strict-origin-when-cross-origin"
+    },
+    {
+     "key": "X-Frame-Options",
+     "value": "SAMEORIGIN"
+    }
+   ]
+  }
+ ]
+}

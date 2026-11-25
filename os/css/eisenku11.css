@@ -1,0 +1,166 @@
+/* =====================================================================
+   EISEN OS PRIME 11.0 · Estilos de arranque (identidad negro · verde · rosa)
+   Incluye las correcciones táctiles y responsive de PRIME.
+   ===================================================================== */
+
+/* ---------- Correcciones táctiles y de teléfono (h1, h2, h3, h9, h10) ---------- */
+html, body { overscroll-behavior: none; }                                   /* sin «tirar para recargar» que cierre la sesión */
+.window-header { touch-action: none; }                                      /* arrastrar ventanas con el dedo ya no se cancela */
+button, a, [role="button"], .k9-btn, .tb-btn, .tb-app, .ctx-item, .sm-row, .start-app-item { touch-action: manipulation; }
+#taskbar { padding-bottom: env(safe-area-inset-bottom, 0px); }
+#lx-panel { padding-top: env(safe-area-inset-top, 0px); }
+.os9.touch .win-ctrl-btn, .p11-tablet .win-ctrl-btn, .p11-phone .win-ctrl-btn { min-width: 44px; min-height: 38px; }
+.p11-phone #s9-taskview, .p11-phone #s9-widgets-btn, .p11-phone .p11-savepill, .p11-phone .p11-padpill { display: none !important; }
+.p11-phone #taskbar-center { -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); }
+.p11-kb #taskbar, .p11-kb #s9-widgets { display: none !important; }
+.p11-kb .window.open:not(.minimized) { max-height: calc(var(--p11-vvh, 100vh) - var(--top-h, 0px)) !important; }
+.p11-kb .window.open.maximized { height: calc(var(--p11-vvh, 100vh) - var(--top-h, 0px)) !important; bottom: auto !important; }
+.p11-sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- Ventanas adaptables por su propio ancho (d1) ---------- */
+.window.w-sm .k9-split, .window.w-sm .ac9-split { grid-template-columns: 1fr !important; grid-template-rows: auto 1fr; }
+.window.w-sm .k9-side { flex-direction: row; overflow-x: auto; overflow-y: hidden; border-right: 0; border-bottom: 1px solid var(--e9-line); max-height: 58px; flex-shrink: 0; scrollbar-width: none; }
+.window.w-sm .k9-side::-webkit-scrollbar { display: none; }
+.window.w-sm .k9-side h6, .window.w-sm .ac9-brand { display: none; }
+.window.w-sm .k9-side .k9-item { width: auto; white-space: nowrap; flex-shrink: 0; }
+.window.w-sm .ac9-hero { grid-template-columns: 1fr; padding: 16px; }
+.window.w-sm .ac9-hero-tiles { display: none; }
+.window.w-sm .ac9-top { padding: 8px 10px; gap: 8px; }
+.window.w-sm .ac9-view { padding: 12px 12px 24px; }
+.window.w-sm .ac9-detail { flex-wrap: wrap; }
+.window.w-sm .ac9-row { grid-auto-columns: minmax(240px, 86%); }
+.window.w-sm .fm9-wrap { grid-template-columns: 1fr; }
+.window.w-sm .fm9 .k9-side, .window.w-sm .fm9-info { display: none !important; }
+.window.w-xs .ac9-card { grid-template-columns: auto 1fr; }
+.window.w-xs .k9-row { flex-wrap: wrap; }
+.window.w-xs .ac9-facts { grid-template-columns: 1fr 1fr; }
+
+/* ---------- Herramientas de ventana (d3, d4, d6) ---------- */
+.window.p11-shade { height: auto !important; min-height: 0 !important; }
+.window.p11-shade > :not(.window-header) { display: none !important; }
+.window.p11-kbmove { outline: 3px dashed var(--e9-pink, #e8709f); outline-offset: 2px; }
+.window.p11-split { transition: none !important; }
+.p11-divider { position: fixed; width: 8px; z-index: 9500; cursor: col-resize; touch-action: none; border-radius: 6px; background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--accent, #2a9d76) 70%, transparent) 30%, color-mix(in srgb, var(--e9-pink, #e8709f) 70%, transparent) 70%, transparent); opacity: .7; }
+.p11-divider:hover, .p11-divider.on, .p11-divider:focus-visible { opacity: 1; outline: none; box-shadow: 0 0 0 2px var(--accent, #2a9d76); }
+
+/* ---------- Escritorio (d7) y personalización (l3, l4, l8, l9) ---------- */
+.dk-ico.p11-newapp::after, .start-app-item.p11-newapp::after { content: ''; position: absolute; top: 6px; right: 12px; width: 9px; height: 9px; border-radius: 50%; background: var(--e9-pink, #e8709f); box-shadow: 0 0 0 2px var(--e9-bg, #0b0c0f), 0 0 10px var(--e9-pink, #e8709f); }
+.start-app-item { position: relative; }
+html[data-p11labels="pill"] .dk-ico .ico-label { background: rgba(8, 9, 11, .62); padding: 1px 7px; border-radius: 7px; text-shadow: none; }
+html[data-p11labels="plain"] .dk-ico .ico-label { text-shadow: none; }
+html[data-p11icons="muted"] .dk-ico .ico-tile, html[data-p11icons="muted"] .start-app-item .ico-tile, html[data-p11icons="muted"] .tb-app .ico-tile { filter: saturate(.55) brightness(.95); }
+html[data-p11icons="mono"] .dk-ico .ico-tile, html[data-p11icons="mono"] .start-app-item .ico-tile, html[data-p11icons="mono"] .tb-app .ico-tile { filter: grayscale(1) contrast(1.1); }
+html[data-p11tb="solid"] #taskbar { background: var(--e9-solid, #121419) !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+html[data-p11tb="accent"] #taskbar { background: color-mix(in srgb, var(--accent, #2a9d76) 20%, var(--e9-solid, #121419)) !important; }
+html[data-p11tb="clear"] #taskbar { background: transparent !important; border-color: transparent !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; box-shadow: none !important; }
+.p11-glow .window.active.open:not(.maximized) { box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent, #2a9d76) 55%, transparent), 0 0 30px -8px color-mix(in srgb, var(--accent, #2a9d76) 60%, transparent), 0 0 70px -24px color-mix(in srgb, var(--e9-pink, #e8709f) 45%, transparent), var(--e9-shadow-3, 0 20px 50px rgba(0,0,0,.5)); }
+.p11-bootmsg { position: absolute; bottom: 14%; left: 0; right: 0; text-align: center; font-size: 12px; letter-spacing: .32em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+
+/* ---------- Inicio PRIME (s1-s7) ---------- */
+.p11-sm { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.p11-qa { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; }
+.p11-qab { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 10px; background: var(--card-bg, rgba(255,255,255,.04)); border: 1px solid var(--e9-line, rgba(255,255,255,.08)); font-size: 12px; color: var(--e9-text-2, #ccc); }
+.p11-qab:hover, .p11-qab:focus-visible { background: var(--accent-soft, rgba(42,157,118,.18)); color: var(--e9-text, #fff); }
+.p11-qab span { font-size: 16px; }
+.p11-azbar { display: flex; gap: 6px; margin: 0 0 8px; }
+.p11-azidx { display: flex; flex-wrap: wrap; gap: 3px; margin: 6px 0 10px; }
+.p11-azidx button { min-width: 28px; height: 28px; border-radius: 7px; background: var(--card-bg, rgba(255,255,255,.05)); font-weight: 700; font-size: 12px; }
+.p11-azidx button:hover, .p11-azidx button:focus-visible { background: var(--accent, #2a9d76); color: #fff; }
+.p11-startfull-on #start-menu-panel.open { left: 8px !important; right: 8px !important; top: calc(var(--top-h, 0px) + 8px) !important; bottom: calc(var(--taskbar-h, 48px) + 8px) !important; width: auto !important; height: auto !important; max-height: none !important; transform: none !important; }
+.p11-startfull-on #start-menu-panel.open .start-grid-apps { grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); }
+
+/* ---------- Notificaciones (n1, n2, n4, n7) ---------- */
+.p11-nprog { height: 5px; border-radius: 99px; background: rgba(255,255,255,.1); margin-top: 8px; overflow: hidden; }
+.p11-nprog i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent, #2a9d76), var(--e9-pink, #e8709f)); transition: width .25s; }
+.p11-nact { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.p11-nact .k9-btn { padding: 5px 10px; font-size: 12px; }
+.p11-cnt { margin-left: 6px; font-style: normal; font-size: 11px; padding: 0 6px; border-radius: 99px; background: var(--e9-pink-ink, #c93a73); color: #fff; }
+#systray-clock { position: relative; }
+.p11-nbadge { position: absolute; top: 2px; right: 2px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 99px; font-style: normal; font-size: 10px; font-weight: 700; line-height: 16px; text-align: center; background: var(--e9-pink-ink, #c93a73); color: #fff; pointer-events: none; }
+.p11-nbadge[hidden] { display: none; }
+.p11-savepill { min-width: 26px; justify-content: center; font-weight: 700; color: var(--e9-green, #34a582); }
+.p11-savepill[data-st="saving"] { color: var(--e9-text-2, #bbb); animation: p11spin 1.2s linear infinite; }
+.p11-savepill[data-st="error"] { color: var(--e9-pink, #e8709f); }
+.p11-savepill[hidden], .p11-padpill[hidden] { display: none !important; }
+@keyframes p11spin { to { transform: rotate(360deg); } }
+
+/* ---------- Modales PRIME: pestaña obsoleta y paleta de comandos ---------- */
+.p11-stale { z-index: 100000; }
+.p11-pal { align-items: flex-start; padding-top: 12vh; }
+.p11-pal .eis-modal-card { width: min(620px, 94vw); padding: 12px; }
+.p11-pl { max-height: 52vh; overflow: auto; margin-top: 8px; display: flex; flex-direction: column; gap: 2px; }
+.p11-pi { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 9px; text-align: left; color: var(--e9-text-2, #ccc); }
+.p11-pi span { width: 22px; text-align: center; }
+.p11-pi.on, .p11-pi:hover, .p11-pi:focus-visible { background: var(--accent-soft, rgba(42,157,118,.2)); color: var(--e9-text, #fff); }
+
+/* ---------- Apps abiertas táctiles (b7) ---------- */
+.p11-recents { position: fixed; inset: 0; z-index: 9800; background: rgba(6, 7, 9, .82); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); display: flex; flex-direction: column; padding: max(14px, env(safe-area-inset-top)) 14px 14px; }
+.p11-rc-h { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; color: #fff; }
+.p11-rc-h b { font-size: 18px; } .p11-rc-h .k9-btn:first-of-type { margin-left: auto; }
+.p11-rc-list { display: flex; gap: 14px; overflow-x: auto; padding: 20px 4px 40px; flex: 1; align-items: center; scroll-snap-type: x mandatory; touch-action: pan-x; }
+.p11-rc { flex: 0 0 min(260px, 72vw); height: min(340px, 56vh); scroll-snap-align: center; border-radius: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 16px; text-align: center; color: #fff; background: linear-gradient(160deg, rgba(31,129,96,.25), rgba(201,58,115,.18)), var(--e9-solid, #121419); border: 1px solid rgba(255,255,255,.1); box-shadow: 0 20px 50px rgba(0,0,0,.45); transition: transform .15s, opacity .15s; touch-action: pan-x; }
+.p11-rc b { font-size: 16px; } .p11-rc small { opacity: .6; font-size: 11px; }
+.p11-rc:focus-visible { outline: 3px solid var(--e9-pink, #e8709f); }
+
+/* ---------- Kiosco (b10) ---------- */
+.p11-kiosk #taskbar, .p11-kiosk #lx-panel, .p11-kiosk #desktop-icons, .p11-kiosk #s9-widgets { display: none !important; }
+.p11-kiosk .window.p11-kioskwin { left: 0 !important; top: 0 !important; width: 100vw !important; height: 100vh !important; border-radius: 0 !important; }
+.p11-kiosk .window.p11-kioskwin .window-controls { display: none !important; }
+.p11-kx { position: fixed; right: 10px; top: 10px; z-index: 99999; width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,.45); color: rgba(255,255,255,.7); font-size: 16px; }
+.p11-kx.hold { background: var(--e9-pink-ink, #c93a73); color: #fff; transition: background 3s; }
+
+/* ---------- Mando: cursor virtual (g1) y ayuda de botones (g3) ---------- */
+.p11-vcur { position: fixed; left: 0; top: 0; z-index: 2147483000; width: 26px; height: 26px; margin: -3px 0 0 -3px; pointer-events: none; border-radius: 50% 50% 50% 0; transform-origin: 0 0; background: radial-gradient(circle at 35% 35%, #fff, #e8709f 60%); box-shadow: 0 0 0 2px #0b0c0f, 0 0 0 4px #34a582, 0 4px 14px rgba(0,0,0,.6); }
+.p11-vcur.dn { box-shadow: 0 0 0 2px #0b0c0f, 0 0 0 6px #e8709f, 0 4px 14px rgba(0,0,0,.6); }
+.p11-vcur[hidden] { display: none; }
+#p11-padhints { position: fixed; left: 50%; bottom: calc(var(--taskbar-h, 48px) + 10px); transform: translateX(-50%); z-index: 9700; display: flex; gap: 14px; padding: 8px 16px; border-radius: 99px; background: rgba(8,9,11,.86); color: #e9ecef; font-size: 13px; pointer-events: none; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+#p11-padhints[hidden] { display: none; }
+#p11-padhints span { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.p11-b { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; font-style: normal; font-weight: 800; font-size: 12px; color: #fff; background: #4b5563; }
+.p11-ba { background: #107c10; } .p11-bb { background: #c0392b; } .p11-bx { background: #1e6bd6; } .p11-by { background: #c9a227; }
+
+/* ---------- Accesibilidad (y1-y4, y8, y10) ---------- */
+.p11-big button, .p11-big .k9-btn, .p11-big .ctx-item, .p11-big select, .p11-big .input-text, .p11-big .tb-btn, .p11-big .sm-row { min-height: 44px; }
+.p11-big .win-ctrl-btn { min-width: 46px; min-height: 40px; }
+.p11-big input[type="checkbox"], .p11-big input[type="radio"] { min-width: 22px; min-height: 22px; }
+.p11-ul a, .p11-ul [data-external-url] { text-decoration: underline !important; text-underline-offset: 2px; }
+.p11-spacing body, .p11-spacing .window-body { letter-spacing: .12em !important; word-spacing: .16em !important; line-height: 1.6 !important; }
+.p11-spacing p { margin-bottom: 2em; }
+.p11-mask .window.open:not(.active):not(.minimized) { filter: brightness(.42) saturate(.6); transition: filter .2s; }
+.p11-mask #desktop-icons, .p11-mask #s9-widgets { opacity: .45; }
+#p11-ruler { position: fixed; left: 0; right: 0; top: 0; height: 44px; z-index: 9600; pointer-events: none; background: color-mix(in srgb, var(--accent, #2a9d76) 14%, transparent); border-top: 2px solid var(--accent, #2a9d76); border-bottom: 2px solid var(--accent, #2a9d76); box-shadow: 0 0 0 100vmax rgba(0,0,0,.28); }
+#p11-ruler[hidden] { display: none; }
+#p11-keys { position: fixed; left: 50%; bottom: 18%; transform: translateX(-50%); z-index: 99990; padding: 10px 18px; border-radius: 14px; background: rgba(8,9,11,.9); color: #fff; font: 600 20px/1.2 ui-monospace, Consolas, monospace; pointer-events: none; border: 1px solid var(--accent, #2a9d76); }
+#p11-keys[hidden] { display: none; }
+.p11-easy #s9-taskview, .p11-easy #s9-widgets-btn, .p11-easy .tb-grid { display: none !important; }
+.p11-easy .dk-ico .ico-label { font-size: 13.5px; font-weight: 600; }
+
+/* ---------- Tabletas (b3, b5) ---------- */
+.p11-tablet #taskbar .tb-btn, .p11-tablet #taskbar .tb-app { min-width: 46px; }
+.p11-tablet .window-header { height: 46px; }
+.p11-tablet .ctx-item { padding-top: 11px; padding-bottom: 11px; }
+.p11-hwkb.p11-tablet .window-header { height: 40px; }
+
+/* ---------- Rendimiento (r6, r7) ---------- */
+.window.minimized *, .window:not(.open) *, .window.s9-otherdesk * { animation-play-state: paused !important; }
+.ac9-grid > .ac9-card, .ac9-table > .k9-li, .sm-list > .sm-row, .p11-dllist > .p11-dlrow { content-visibility: auto; contain-intrinsic-size: auto 84px; }
+
+/* ---------- Ventana de app web (t5) ---------- */
+.p11-appwin .app-body { display: flex; flex-direction: column; padding: 0; }
+.p11-awbar { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-bottom: 1px solid var(--e9-line, rgba(255,255,255,.08)); background: var(--e9-elev, #15181d); flex-wrap: wrap; }
+.p11-awhost { font-size: 12px; color: var(--e9-text-2, #bbb); margin-right: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 50%; }
+.p11-awframe { flex: 1; width: 100%; border: 0; background: #fff; min-height: 0; }
+.p11-awnote { padding: 8px 10px; font-size: 12px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: var(--e9-warn-soft, rgba(217,160,58,.14)); }
+.p11-awnote[hidden] { display: none; }
+.p11-extlink { display: inline-block; text-decoration: none; padding: 10px 16px; border-radius: 10px; }
+
+/* ---------- Widgets PRIME ---------- */
+.p11-wrow { display: flex; align-items: center; gap: 6px; width: 100%; padding: 5px 4px; border-radius: 8px; text-align: left; font-size: 12px; }
+.p11-wrow span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.p11-wrow small { opacity: .6; }
+.p11-wrow:hover { background: var(--card-hover, rgba(255,255,255,.06)); }
+.p11-wgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.p11-wgrid button { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 2px; border-radius: 10px; font-size: 10.5px; }
+.p11-wgrid button:hover { background: var(--card-hover, rgba(255,255,255,.06)); }
+
+@media (prefers-reduced-motion: reduce) { .p11-savepill[data-st="saving"] { animation: none; } .p11-rc { transition: none; } }

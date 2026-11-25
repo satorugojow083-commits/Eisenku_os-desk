@@ -1,0 +1,31 @@
+{
+  "eisenplugin": 1,
+  "id": "prime-muestra",
+  "name": "PRIME Muestra",
+  "version": "1.0.0",
+  "author": "EISEN OS PRIME",
+  "description": "Plugin de ejemplo: un tema Neón Jade, dos fondos, enlaces de estudio, comandos para Domingo y un widget aislado con la frase del día.",
+  "contributes": {
+    "themes": [
+      { "name": "Neón Jade", "accent": "#34a582", "vars": { "--e9-green": "#34a582", "--e9-green-ink": "#1f8160", "--e9-pink": "#e8709f", "--e9-pink-ink": "#c93a73" } },
+      { "name": "Rosa Grafito", "accent": "#c93a73", "vars": { "--e9-green": "#2f8a6d", "--e9-pink": "#f08bb2", "--e9-pink-ink": "#c93a73" } }
+    ],
+    "wallpapers": [
+      { "name": "Prisma Jade", "css": "conic-gradient(from 210deg at 60% 40%, #07080a, #0e2a21, #2a0f1d, #07080a)" },
+      { "name": "Horizonte Rosa", "css": "radial-gradient(1200px 500px at 50% 110%, rgba(232,112,159,.45), transparent 60%), linear-gradient(180deg, #06070a, #101319)" }
+    ],
+    "links": [
+      { "name": "Khan Academy", "url": "https://es.khanacademy.org", "icon": "🎓" },
+      { "name": "Wikipedia", "url": "https://es.wikipedia.org", "icon": "📚" },
+      { "name": "Desmos", "url": "https://www.desmos.com/calculator", "icon": "📈" }
+    ],
+    "commands": [
+      { "phrase": "modo estudio", "say": "🎓 Abrí **Estudio PRIME**. ¡A por ello!", "action": { "type": "open", "app": "studio" } },
+      { "phrase": "abre mi horario", "say": "🏫 Abrí el **Organizador académico**.", "action": { "type": "open", "app": "academic" } },
+      { "phrase": "fondo prisma", "say": "🖼️ Fondo **Prisma Jade** aplicado.", "action": { "type": "wallpaper", "name": "Prisma Jade" } }
+    ],
+    "widgets": [
+      { "id": "frase", "name": "Frase del día", "icon": "💬", "height": 110, "html": "<style>p{margin:6px 0;line-height:1.4}small{opacity:.7}</style><p id='q'></p><small id='a'></small><script>var Q=[['La educación es el arma más poderosa para cambiar el mundo.','Nelson Mandela'],['Aprender sin pensar es esfuerzo perdido.','Confucio'],['El éxito es la suma de pequeños esfuerzos repetidos día tras día.','Robert Collier'],['La curiosidad es la mecha en la vela del aprendizaje.','William A. Ward'],['No cuentes los días, haz que los días cuenten.','Muhammad Ali']];var d=new Date();var i=(d.getFullYear()*372+d.getMonth()*31+d.getDate())%Q.length;document.getElementById('q').textContent='“'+Q[i][0]+'”';document.getElementById('a').textContent='— '+Q[i][1];</script>" }
+    ]
+  }
+}

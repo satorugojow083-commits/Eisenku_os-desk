@@ -1,0 +1,18 @@
+{
+  "eisenapp": 1,
+  "id": "hola-eisenku",
+  "name": "Hola EISENKU",
+  "version": "1.0.0",
+  "author": "EISENKU Technology (ejemplo)",
+  "description": "App de ejemplo para desarrolladores: muestra el SDK (notificaciones, almacenamiento aislado y archivos) y verifica el aislamiento.",
+  "icon": "👋",
+  "category": "Desarrollo",
+  "permissions": [
+    "notifications",
+    "storage",
+    "files"
+  ],
+  "width": 640,
+  "height": 520,
+  "html": "<style>\n:root{color-scheme:dark}body{margin:0;font:14px/1.5 system-ui,sans-serif;background:#0f1115;color:#e9ebef;padding:22px}\nh1{font-size:20px;margin:0 0 4px}p{color:#9aa1ad;margin:0 0 14px}.row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}\nbutton{border:1px solid #2a2f38;background:#1d2128;color:#e9ebef;padding:8px 12px;border-radius:8px;cursor:pointer}button.pri{background:#1f8160;border-color:#1f8160}\ntextarea{width:100%;min-height:110px;background:#0b0c0f;color:#e9ebef;border:1px solid #2a2f38;border-radius:8px;padding:10px;box-sizing:border-box}\npre{background:#0b0c0f;border:1px solid #2a2f38;border-radius:8px;padding:10px;white-space:pre-wrap;font-size:12px}\n</style>\n<h1>👋 Hola desde una app de terceros</h1>\n<p>Esta app se ejecuta aislada (sandbox). Solo puede usar los permisos que concediste: notificaciones, almacenamiento propio y guardar archivos que tú decidas.</p>\n<textarea id=\"t\" placeholder=\"Escribe una nota…\"></textarea>\n<div class=\"row\"><button class=\"pri\" id=\"save\">💾 Guardar en mi almacenamiento</button><button id=\"load\">↺ Cargar</button><button id=\"notify\">🔔 Notificar</button><button id=\"file\">📄 Guardar como archivo</button><button id=\"info\">ℹ️ Información</button></div>\n<pre id=\"out\">Listo.</pre>\n<script>\nconst out = m => document.getElementById('out').textContent = typeof m === 'string' ? m : JSON.stringify(m, null, 2);\nconst t = document.getElementById('t');\ndocument.getElementById('save').onclick = () => eisen.storage.set('nota', t.value).then(() => out('Guardado en el almacenamiento aislado de esta app.')).catch(e => out('Error: ' + e.message));\ndocument.getElementById('load').onclick = () => eisen.storage.get('nota').then(v => { t.value = v || ''; out('Cargado.'); }).catch(e => out('Error: ' + e.message));\ndocument.getElementById('notify').onclick = () => eisen.notify('Hola EISENKU', t.value || 'Notificación de prueba').then(() => out('Notificación enviada.')).catch(e => out('Error: ' + e.message));\ndocument.getElementById('file').onclick = () => eisen.files.save('nota-hola.txt', t.value || '(vacío)').then(() => out('Archivo guardado en Documentos › Apps › Hola EISENKU.')).catch(e => out('Error: ' + e.message));\ndocument.getElementById('info').onclick = () => eisen.info().then(out);\n// intento deliberado de acceder a datos del sistema: el aislamiento lo impide\ntry { localStorage.getItem('eisen_notes'); out('⚠️ Acceso inesperado al almacenamiento del sistema'); } catch (e) { out('Aislamiento verificado: esta app no puede leer los datos de EISENKU OS.'); }\n</script>"
+}
