@@ -13,7 +13,7 @@ EISEN OS PRIME es un escritorio completo (164 apps, 28 juegos y navegador) que f
 
 ## Cómo se publica
 
-- **Vercel** y **GitHub Pages** publican esta rama tal cual: no hay paso de compilación.
+- **Vercel**, **Netlify** y **GitHub Pages** publican esta rama tal cual: no hay paso de compilación (`netlify.toml` y `vercel.json` ya están configurados).
 - La versión web no incluye el servidor proxy del navegador interno: Vercel y la mayoría de plataformas de alojamiento prohíben alojar proxies. El proxy va dentro del APK y de la versión para PC, es decir, en el propio dispositivo de cada persona.
 - Para subirlo a otra plataforma estática (Netlify, Cloudflare Pages, Render, Surge…), sube el contenido de esta carpeta; `_headers` ya trae las cabeceras de seguridad.
 
