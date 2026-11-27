@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Teleprompter · EISENKU</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="../_kit/kit.css">
+<style>
+:root{--ac:#FFC857;--on-ac:#1a1200}
+.ed textarea{min-height:46vh;font-size:17px;line-height:1.7}
+.play{position:fixed;inset:0;z-index:80;background:#000;overflow:hidden;touch-action:none;user-select:none}
+.scroller{position:absolute;inset:0;overflow:hidden}
+.txt{position:absolute;left:0;right:0;padding:0 8vw;will-change:transform;font-weight:600;line-height:1.38;color:#fff}
+.txt.mirror{transform-origin:center}
+.txt w{transition:color .25s}
+.txt w.rd{color:rgba(255,255,255,.32)}
+.txt w.now{color:var(--ac)}
+.txt p{margin:0 0 .7em}
+.line{position:absolute;left:0;right:0;height:0;border-top:2px solid color-mix(in srgb,var(--ac) 55%,transparent);pointer-events:none}
+.line::before{content:"";position:absolute;left:10px;top:-11px;border:10px solid transparent;border-left:14px solid var(--ac)}
+.shade{position:absolute;left:0;right:0;pointer-events:none}
+.ctl{position:absolute;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:6px;align-items:center;padding:8px;border-radius:18px;background:rgba(20,20,28,.88);border:1px solid var(--line);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);transition:opacity .3s;max-width:calc(100vw - 16px);overflow-x:auto}
+.ctl.hide{opacity:0;pointer-events:none}
+.ctl .v{font:500 11px var(--mono);color:var(--mut);min-width:44px;text-align:center}
+.cd{position:absolute;inset:0;display:grid;place-items:center;font:700 30vmin/1 var(--mono);color:var(--ac);pointer-events:none}
+.badge{position:absolute;top:calc(14px + env(safe-area-inset-top));right:14px;font:500 11px var(--mono);letter-spacing:.14em;padding:7px 10px;border-radius:999px;background:rgba(20,20,28,.85);color:var(--mut)}
+.badge.live{color:var(--gr)}
+</style>
+</head>
+<body>
+<header class="top">
+  <button class="ib" id="back" hidden aria-label="Atrás"></button>
+  <h1 id="ttl"><i></i>Teleprompter</h1>
+  <button class="btn sm" id="install" hidden>Instalar</button>
+</header>
+<main class="wrap" id="view"></main>
+
+<script type="module">
+import { $, h, icon, store, toast, confirmSheet, boot, uid, norm, clamp, wakeLock } from '../_kit/kit.js';
+boot();
+const S = store('prompter'), view = $('#view'), back = $('#back'), wl = wakeLock();
+back.append(icon('back'));
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let scripts = S.get('scripts', null);
+if (!scripts) scripts = [{ id: uid(), title: 'Ejemplo: intro de stream', updated: Date.now(), text: '¡Hola a todos y bienvenidos a un nuevo directo de EISENKU!\n\nHoy les traigo algo especial: una app que se controla con las manos, como en las películas.\n\nSi es tu primera vez por aquí, sígueme para no perderte lo que viene. Y ahora sí, empecemos.' }];
+const save = () => S.set('scripts', scripts);
+const cfg = Object.assign({ size: 54, speed: 60, mirror: false, voice: !!SR, line: .36 }, S.get('cfg', {}));
+const saveCfg = () => S.set('cfg', cfg);
+const words = t => t.trim() ? t.trim().split(/\s+/).length : 0;
+const dur = t => { const s = Math.round(words(t) / 140 * 60); return s < 60 ? `${s} s` : `${Math.floor(s / 60)} min ${s % 60 ? (s % 60) + ' s' : ''}`; };
+
+/* ───────── lista y editor ───────── */
+function home() {
+  back.hidden = true; $('#ttl').lastChild.textContent = 'Teleprompter';
+  view.replaceChildren(h('div', { class: 'list' }, scripts.length ? scripts.map(s => h('button', { class: 'item', onclick: () => edit(s.id) },
+    h('div', { class: 'grow' }, h('div', { class: 't' }, s.title || 'Sin título'), h('div', { class: 'muted xs' }, `${words(s.text)} palabras · ${dur(s.text)} leído en voz alta`)),
+    h('span', { class: 'btn sm pri', onclick: e => { e.stopPropagation(); play(s); } }, icon('play'), 'Leer'))) :
+    h('div', { class: 'empty' }, h('b', {}, 'Sin guiones'), 'Escribe o pega tu texto y léelo mirando a la cámara.')),
+    h('button', { class: 'fab', onclick: () => { const s = { id: uid(), title: '', text: '', updated: Date.now() }; scripts.unshift(s); save(); edit(s.id); } }, icon('plus'), 'Nuevo guion'));
+}
+function edit(id) {
+  const s = scripts.find(x => x.id === id); if (!s) return home();
+  back.hidden = false; back.onclick = () => { if (!s.text.trim() && !s.title) { scripts = scripts.filter(x => x !== s); save(); } home(); };
+  $('#ttl').lastChild.textContent = s.title || 'Guion';
+  const info = h('span', { class: 'muted xs' });
+  const upd = () => { info.textContent = `${words(s.text)} palabras · unos ${dur(s.text)}`; };
+  const ta = h('textarea', { value: s.text, placeholder: 'Escribe tu guion. Deja una línea en blanco para separar párrafos.', oninput: e => { s.text = e.target.value; s.updated = Date.now(); save(); upd(); } });
+  view.replaceChildren(h('div', { class: 'stack ed' },
+    h('input', { value: s.title, placeholder: 'Título', oninput: e => { s.title = e.target.value; $('#ttl').lastChild.textContent = s.title || 'Guion'; save(); } }),
+    ta, h('div', { class: 'row' }, info, h('span', { class: 'grow' }),
+      h('button', { class: 'btn sq dng', 'aria-label': 'Eliminar guion', onclick: () => confirmSheet('¿Eliminar guion?', `«${s.title || 'Sin título'}» se borrará.`, 'Eliminar', () => { scripts = scripts.filter(x => x !== s); save(); home(); }) }, icon('trash')),
+      h('button', { class: 'btn pri', onclick: () => s.text.trim() ? play(s) : toast('Escribe algo primero') }, icon('play'), 'Leer'))));
+  upd();
+}
+
+/* ───────── modo lectura ───────── */
+function play(s) {
+  const el = h('div', { class: 'play' }), sc = h('div', { class: 'scroller' }), txt = h('div', { class: 'txt' });
+  const toks = [], keys = [];
+  s.text.split(/\n\s*\n/).forEach(par => {
+    const p = h('p');
+    par.split(/\s+/).filter(Boolean).forEach(w => { const e = h('w', {}, w + ' '); p.append(e); toks.push(e); keys.push(norm(w)); });
+    txt.append(p);
+  });
+  const line = h('div', { class: 'line' }), cd = h('div', { class: 'cd', hidden: true });
+  const shadeT = h('div', { class: 'shade', style: 'top:0;background:linear-gradient(#000,rgba(0,0,0,0))' }), shadeB = h('div', { class: 'shade', style: 'bottom:0;height:22%;background:linear-gradient(rgba(0,0,0,0),#000)' });
+  const badge = h('div', { class: 'badge' });
+  sc.append(txt); el.append(sc, shadeT, shadeB, line, cd, badge);
+
+  let y = 0, target = 0, running = false, idx = 0, raf = 0, last = 0, rec = null, hideT = 0, lastHeard = 0;
+  const H = () => el.clientHeight;
+  const layout = () => {
+    txt.style.fontSize = cfg.size + 'px';
+    line.style.top = (cfg.line * H()) + 'px'; shadeT.style.height = (cfg.line * H() * .7) + 'px';
+    txt.classList.toggle('mirror', cfg.mirror);
+    badge.textContent = cfg.voice ? (rec ? 'SIGUE TU VOZ' : 'VOZ EN PAUSA') : `AUTO · ${cfg.speed}`; badge.classList.toggle('live', !!(cfg.voice && rec));
+  };
+  const minY = () => -cfg.line * H(), maxY = () => Math.max(0, txt.offsetHeight - cfg.line * H());
+  const render = () => { txt.style.transform = `translateY(${-y}px)` + (cfg.mirror ? ' scaleX(-1)' : ''); };
+  y = target = minY() + cfg.size * .7;
+  function frame(t) {
+    raf = requestAnimationFrame(frame);
+    const dt = Math.min(.05, (t - last) / 1000 || 0); last = t;
+    if (cfg.voice) { if (rec) y += (target - y) * Math.min(1, dt * 5); }
+    else if (running) y += cfg.speed * dt * (cfg.size / 54);
+    y = clamp(y, minY(), maxY() + H() * .3); render();
+  }
+  // Sigue la voz: busca dónde vas comparando tus últimas palabras con el guion.
+  function follow(spoken) {
+    const said = norm(spoken).split(' ').filter(Boolean).slice(-8); if (!said.length) return;
+    let best = -1, bestScore = 0;
+    for (let j = Math.max(0, idx - 3); j < Math.min(keys.length, idx + 40); j++) {
+      let sc2 = 0;
+      for (let k = 0; k < said.length && j - k >= 0; k++) { if (keys[j - k] === said[said.length - 1 - k]) sc2++; else break; }
+      const dist = Math.abs(j - idx);
+      const ok = sc2 >= 2 || (sc2 === 1 && said.at(-1).length >= 5 && dist <= 6);
+      if (ok && (sc2 > bestScore || (sc2 === bestScore && dist < Math.abs(best - idx)))) { best = j; bestScore = sc2; }
+    }
+    if (best < 0) return;
+    idx = best + 1; lastHeard = performance.now();
+    toks.forEach((w, i) => { w.classList.toggle('rd', i < idx - 1); w.classList.toggle('now', i === idx - 1); });
+    const w = toks[Math.min(idx, toks.length - 1)];
+    target = w.offsetTop - cfg.line * H() + cfg.size * .7;
+  }
+  function voiceOn() {
+    if (!SR) { toast('Este navegador no reconoce voz; usa el modo automático'); cfg.voice = false; layout(); return; }
+    rec = new SR(); rec.lang = 'es-MX'; rec.continuous = true; rec.interimResults = true;
+    rec.onresult = e => { let t = ''; for (let i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript + ' '; follow(t); };
+    rec.onerror = e => { if (/not-allowed/.test(e.error)) { toast('Permite el micrófono'); voiceOff(); } };
+    rec.onend = () => { if (rec) try { rec.start(); } catch {} };
+    try { rec.start(); } catch {} layout(); sync();
+  }
+  function voiceOff() { const r = rec; rec = null; try { r?.stop(); } catch {} layout(); sync(); }
+  const v1 = h('span', { class: 'v' }), v2 = h('span', { class: 'v' }), playB = h('button', { class: 'btn pri sq', 'aria-label': 'Reproducir o pausar', onclick: () => toggle() });
+  const voiceB = h('button', { class: 'btn sq', 'aria-label': 'Seguir mi voz', title: 'Seguir mi voz', onclick: () => { cfg.voice = !cfg.voice; saveCfg(); if (cfg.voice && running) { running = false; voiceOn(); } else if (!cfg.voice && rec) { voiceOff(); } sync(); } }, icon('mic'));
+  const sync = () => {
+    v1.textContent = cfg.voice ? 'voz' : cfg.speed; v2.textContent = cfg.size + 'px';
+    playB.replaceChildren(icon(running || rec ? 'pause' : 'play'));
+    voiceB.classList.toggle('pri', cfg.voice); layout();
+  };
+  const ctl = h('div', { class: 'ctl' },
+    h('button', { class: 'btn sq', 'aria-label': 'Salir', onclick: () => exit() }, icon('close')),
+    playB, voiceB,
+    h('button', { class: 'btn sm sq', 'aria-label': 'Más lento', onclick: () => { cfg.speed = clamp(cfg.speed - 10, 10, 300); saveCfg(); sync(); } }, icon('minus')), v1,
+    h('button', { class: 'btn sm sq', 'aria-label': 'Más rápido', onclick: () => { cfg.speed = clamp(cfg.speed + 10, 10, 300); saveCfg(); sync(); } }, icon('plus')),
+    h('button', { class: 'btn sm sq', 'aria-label': 'Letra más chica', onclick: () => { cfg.size = clamp(cfg.size - 6, 24, 140); saveCfg(); sync(); } }, 'A−'), v2,
+    h('button', { class: 'btn sm sq', 'aria-label': 'Letra más grande', onclick: () => { cfg.size = clamp(cfg.size + 6, 24, 140); saveCfg(); sync(); } }, 'A+'),
+    h('button', { class: 'btn sq', 'aria-label': 'Espejo', title: 'Espejo (para cristal de teleprompter)', onclick: () => { cfg.mirror = !cfg.mirror; saveCfg(); layout(); } }, icon('mirror')),
+    h('button', { class: 'btn sq', 'aria-label': 'Volver al inicio', onclick: () => { idx = 0; y = target = minY() + cfg.size * .7; toks.forEach(w => w.classList.remove('rd', 'now')); } }, icon('back')));
+  el.append(ctl);
+  const showCtl = () => { ctl.classList.remove('hide'); clearTimeout(hideT); hideT = setTimeout(() => { if (running || rec) ctl.classList.add('hide'); }, 2800); };
+  function toggle() {
+    if (cfg.voice) { rec ? voiceOff() : voiceOn(); return showCtl(); }
+    if (running) { running = false; sync(); return showCtl(); }
+    let n = 3; cd.hidden = false; cd.textContent = n;
+    const iv = setInterval(() => { n--; if (n) cd.textContent = n; else { clearInterval(iv); cd.hidden = true; running = true; sync(); showCtl(); } }, 700);
+  }
+  // Arrastrar mueve el texto; tocar muestra controles.
+  let drag = null;
+  sc.addEventListener('pointerdown', e => { drag = { y0: e.clientY, s: y, moved: false }; sc.setPointerCapture(e.pointerId); });
+  sc.addEventListener('pointermove', e => { if (!drag) return; const d = e.clientY - drag.y0; if (Math.abs(d) > 6) drag.moved = true; if (drag.moved) { y = target = drag.s - d; } });
+  sc.addEventListener('pointerup', () => { if (drag && !drag.moved) showCtl(); drag = null; });
+  sc.addEventListener('wheel', e => { y = target = y + e.deltaY; }, { passive: true });
+  const key = e => {
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); }
+    else if (e.key === 'ArrowUp') { cfg.speed = clamp(cfg.speed + 10, 10, 300); sync(); }
+    else if (e.key === 'ArrowDown') { cfg.speed = clamp(cfg.speed - 10, 10, 300); sync(); }
+    else if (e.key === 'PageDown' || e.key === 'ArrowRight') { y = target = y + cfg.size * 3; }
+    else if (e.key === 'PageUp' || e.key === 'ArrowLeft') { y = target = y - cfg.size * 3; }
+    else if (e.key === 'Escape') exit();
+    showCtl();
+  };
+  addEventListener('keydown', key); addEventListener('resize', layout);
+  function exit() { cancelAnimationFrame(raf); voiceOff(); wl.off(); removeEventListener('keydown', key); removeEventListener('resize', layout); el.remove(); if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {}); }
+  document.body.append(el); document.documentElement.requestFullscreen?.().catch(() => {});
+  wl.on(); layout(); sync(); render(); raf = requestAnimationFrame(t => { last = t; frame(t); });
+  y = target = minY() + cfg.size * .7;
+  showCtl();
+}
+home();
+</script>
+</body>
+</html>

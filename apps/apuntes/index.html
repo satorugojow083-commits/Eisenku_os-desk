@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07070b">
+<title>Apuntes por voz · EISENKU</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="../_kit/kit.css">
+<style>
+:root{--ac:#3DFFA8;--on-ac:#03140c}
+.rec{display:flex;align-items:center;gap:16px}
+.recb{width:72px;height:72px;border-radius:50%;border:0;background:var(--pk);color:#16070f;display:grid;place-items:center;flex:none;box-shadow:0 12px 30px -10px var(--pk)}
+.recb svg{width:28px;height:28px}
+.recb.on{animation:pulse 1.6s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,79,163,.55)}70%{box-shadow:0 0 0 20px rgba(255,79,163,0)}100%{box-shadow:0 0 0 0 rgba(255,79,163,0)}}
+.timer{font:500 30px/1 var(--mono)}
+.paras{display:grid;gap:4px}
+.p{display:grid;grid-template-columns:52px 1fr 36px;gap:8px;align-items:start;padding:8px 4px;border-radius:10px}
+.p:hover{background:rgba(255,255,255,.03)}
+.p .tm{font:500 11px/2 var(--mono);color:var(--mut)}
+.p .tx{outline:none;line-height:1.65;padding:2px 4px;border-radius:6px}
+.p .tx:focus{background:rgba(255,255,255,.05)}
+.p.star{background:color-mix(in srgb,var(--am) 9%,transparent)}
+.p.star .tm{color:var(--am)}
+.p .ib{width:34px;height:34px}
+.p.star .ib{color:var(--am)}
+.mid{color:var(--mut);font-style:italic;padding:8px 64px}
+.det{border-color:color-mix(in srgb,var(--am) 35%,transparent)}
+.det li{margin:6px 0;cursor:pointer}
+.det li:hover{color:var(--am)}
+mark{background:color-mix(in srgb,var(--gr) 30%,transparent);color:inherit;border-radius:3px}
+.meta{display:grid;grid-template-columns:1fr 180px;gap:8px}
+@media(max-width:560px){.meta{grid-template-columns:1fr}.p{grid-template-columns:44px 1fr 34px}.mid{padding:8px 52px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <button class="ib" id="back" hidden aria-label="Atrás"></button>
+  <h1 id="ttl"><i></i>Apuntes por voz</h1>
+  <button class="btn sm" id="install" hidden>Instalar</button>
+</header>
+<main class="wrap" id="view"></main>
+
+<script type="module">
+import { $, h, icon, store, toast, sheet, confirmSheet, shareOrDownload, boot, uid, norm, mmss, wakeLock } from '../_kit/kit.js';
+boot();
+const S = store('apuntes'), view = $('#view'), back = $('#back'), wl = wakeLock();
+back.append(icon('back'));
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let sessions = S.get('sessions', []);
+const save = () => S.set('sessions', sessions);
+
+// Frases que suelen anunciar algo importante en clase.
+const KEY = /\b(examen|tarea|entrega|entregar|proyecto|exposicion|importante|no olviden|para el (lunes|martes|miercoles|jueves|viernes|sabado|domingo)|la proxima clase|el (\d{1,2}) de (enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)|va a venir|calificacion|puntos extra)\b/;
+const isKey = t => KEY.test(norm(t));
+
+/* ───────── lista ───────── */
+function home() {
+  stop(); back.hidden = true; $('#ttl').lastChild.textContent = 'Apuntes por voz';
+  const q = h('input', { type: 'search', placeholder: 'Buscar en todos tus apuntes…', 'aria-label': 'Buscar' });
+  const list = h('div', { class: 'list' });
+  const render = () => {
+    const t = norm(q.value);
+    const shown = sessions.filter(s => !t || norm(s.title + ' ' + s.mat + ' ' + s.paras.map(p => p.text).join(' ')).includes(t));
+    list.replaceChildren(...(shown.length ? shown.map(s => {
+      const hits = t ? s.paras.filter(p => norm(p.text).includes(t)).slice(0, 2) : [];
+      const pend = s.paras.filter(p => p.star).length;
+      return h('button', { class: 'item', onclick: () => open(s.id) },
+        h('div', { class: 'grow' }, h('div', { class: 't' }, s.title || 'Sin título'),
+          h('div', { class: 'muted xs' }, [s.mat, new Date(s.created).toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short' }), mmss(s.dur)].filter(Boolean).join(' · ')),
+          hits.map(p => h('div', { class: 'xs', style: 'margin-top:4px' }, mark(p.text, t)))),
+        pend ? h('span', { class: 'chip', style: 'color:var(--am);border-color:color-mix(in srgb,var(--am) 40%,transparent)' }, icon('star'), pend) : null);
+    }) : [h('div', { class: 'empty' }, sessions.length ? 'Sin resultados.' : [h('b', {}, 'Tu primera clase'), 'Pulsa «Nueva clase», deja la tableta en la mesa y yo escribo. Marco solo lo que suene a examen o tarea.'])]));
+  };
+  q.addEventListener('input', render); render();
+  view.replaceChildren(h('div', { class: 'stack' }, sessions.length ? q : null, list),
+    h('button', { class: 'fab', onclick: () => { const s = { id: uid(), title: '', mat: '', created: Date.now(), dur: 0, paras: [] }; sessions.unshift(s); save(); open(s.id, true); } }, icon('mic'), 'Nueva clase'));
+}
+function mark(text, t) {
+  const i = norm(text).indexOf(t); if (!t || i < 0) return text.slice(0, 140);
+  const a = Math.max(0, i - 50); return [a ? '…' : '', text.slice(a, i), h('mark', {}, text.slice(i, i + t.length)), text.slice(i + t.length, i + t.length + 80)];
+}
+
+/* ───────── grabación ───────── */
+let rec = null, on = false, cur = null, t0 = 0, base = 0, lastFinal = 0, tick = 0;
+function stop() {
+  if (on) base += (performance.now() - t0) / 1000;
+  on = false; try { rec?.stop(); } catch {} rec = null; wl.off(); clearInterval(tick);
+  if (cur) { cur.dur = base; save(); }
+}
+function open(id, autostart) {
+  stop(); cur = sessions.find(s => s.id === id); if (!cur) return home();
+  base = cur.dur || 0;
+  back.hidden = false; back.onclick = () => { if (!cur.paras.length && !cur.title) { sessions = sessions.filter(s => s !== cur); save(); } home(); };
+  $('#ttl').lastChild.textContent = cur.title || 'Clase';
+  const title = h('input', { value: cur.title, placeholder: 'Tema de la clase', oninput: e => { cur.title = e.target.value; $('#ttl').lastChild.textContent = cur.title || 'Clase'; save(); } });
+  const mat = h('input', { value: cur.mat, placeholder: 'Materia', list: 'mats', oninput: e => { cur.mat = e.target.value; save(); } });
+  const mats = h('datalist', { id: 'mats' }, [...new Set(sessions.map(s => s.mat).filter(Boolean))].map(m => h('option', { value: m })));
+  const recB = h('button', { class: 'recb', 'aria-label': 'Grabar', onclick: () => on ? stop2() : start() }, icon('mic'));
+  const timer = h('div', { class: 'timer' }, mmss(base));
+  const status = h('div', { class: 'muted sm' }, SR ? 'Listo para escuchar' : 'Este navegador no puede transcribir. Ábrelo en Chrome.');
+  const paras = h('div', { class: 'paras' }), mid = h('div', { class: 'mid', hidden: true });
+  const det = h('ul', { style: 'margin:8px 0 0;padding-left:18px' }), detCard = h('div', { class: 'card det', hidden: true }, h('div', { class: 'lbl', style: 'color:var(--am)' }, 'Detectado en la clase'), det);
+  const now = () => base + (on ? (performance.now() - t0) / 1000 : 0);
+  const renderDet = () => {
+    const ks = cur.paras.filter(p => p.star);
+    detCard.hidden = !ks.length;
+    det.replaceChildren(...ks.map(p => h('li', { onclick: () => paras.children[cur.paras.indexOf(p)]?.scrollIntoView({ behavior: 'smooth', block: 'center' }) }, h('span', { class: 'mono xs muted' }, mmss(p.t) + '  '), p.text.slice(0, 120))));
+  };
+  const row = p => {
+    const el = h('div', { class: 'p' + (p.star ? ' star' : '') },
+      h('div', { class: 'tm' }, mmss(p.t)),
+      h('div', { class: 'tx', contenteditable: 'true', spellcheck: 'true', oninput: e => { p.text = e.target.textContent; save(); } }, p.text),
+      h('button', { class: 'ib', 'aria-label': 'Marcar como importante', onclick: () => { p.star = !p.star; el.classList.toggle('star', p.star); save(); renderDet(); } }, icon('star')));
+    return el;
+  };
+  const renderAll = () => { paras.replaceChildren(...cur.paras.map(row)); renderDet(); };
+  const closePara = () => { const p = cur.paras.at(-1); if (p && !/[.?!…]$/.test(p.text)) { p.text += '.'; paras.lastChild.querySelector('.tx').textContent = p.text; } };
+  const addFinal = txt => {
+    txt = txt.trim(); if (!txt) return;
+    const t = now(), last = cur.paras.at(-1), gap = performance.now() - lastFinal;
+    lastFinal = performance.now();
+    if (!last || gap > 4500 || last.text.length > 420) {
+      closePara();
+      const p = { t, text: txt.charAt(0).toUpperCase() + txt.slice(1), star: isKey(txt) };
+      cur.paras.push(p); paras.append(row(p));
+    } else {
+      last.text += ' ' + txt; if (!last.star && isKey(txt)) { last.star = true; paras.lastChild.classList.add('star'); }
+      paras.lastChild.querySelector('.tx').textContent = last.text;
+    }
+    save(); renderDet();
+    if (scrollY + innerHeight > document.body.scrollHeight - 260) scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  };
+  function start() {
+    if (!SR) return toast('Tu navegador no tiene reconocimiento de voz');
+    on = true; t0 = performance.now(); lastFinal = 0; wl.on();
+    recB.classList.add('on'); recB.replaceChildren(icon('stop')); status.textContent = 'Escuchando… deja la tableta cerca de quien habla';
+    tick = setInterval(() => timer.textContent = mmss(now()), 500);
+    const go = () => {
+      rec = new SR(); rec.lang = 'es-MX'; rec.continuous = true; rec.interimResults = true;
+      rec.onresult = e => {
+        let m = '';
+        for (let i = e.resultIndex; i < e.results.length; i++) { const r = e.results[i]; if (r.isFinal) addFinal(r[0].transcript); else m += r[0].transcript; }
+        mid.hidden = !m; mid.textContent = m;
+      };
+      rec.onerror = e => { if (/not-allowed|service-not-allowed/.test(e.error)) { toast('Permite el micrófono para transcribir'); stop2(); } };
+      rec.onend = () => { if (on) setTimeout(() => on && go(), 250); };
+      try { rec.start(); } catch {}
+    };
+    go();
+  }
+  function stop2() {
+    if (on) base = now();
+    on = false; try { rec?.stop(); } catch {} wl.off(); clearInterval(tick); mid.hidden = true; closePara();
+    cur.dur = base; save(); timer.textContent = mmss(base);
+    recB.classList.remove('on'); recB.replaceChildren(icon('mic')); status.textContent = cur.paras.length ? 'En pausa · pulsa para seguir' : 'Listo para escuchar';
+  }
+  const exportTxt = () => {
+    const ks = cur.paras.filter(p => p.star);
+    const txt = [`${cur.title || 'Clase'}${cur.mat ? ' — ' + cur.mat : ''}`, new Date(cur.created).toLocaleString('es-MX'), '',
+      ks.length ? ['IMPORTANTE', ...ks.map(p => `• [${mmss(p.t)}] ${p.text}`), ''] : [],
+      'APUNTES', ...cur.paras.map(p => `[${mmss(p.t)}]${p.star ? ' ★' : ''} ${p.text}`)].flat().join('\n');
+    return new Blob([txt], { type: 'text/plain;charset=utf-8' });
+  };
+  view.replaceChildren(h('div', { class: 'stack' },
+    h('div', { class: 'meta' }, title, mat), mats,
+    h('div', { class: 'card rec' }, recB, h('div', { class: 'grow' }, timer, status)),
+    detCard,
+    h('div', { class: 'card', style: 'padding:8px' }, paras, mid, cur.paras.length ? null : h('div', { class: 'empty', style: 'padding:28px' }, 'Lo que se diga aparecerá aquí. Puedes corregir cualquier frase tocándola.')),
+    h('div', { class: 'row' },
+      h('button', { class: 'btn', onclick: async () => { const b = exportTxt(); await shareOrDownload(b, (cur.title || 'apuntes').replace(/[\\/:*?"<>|]+/g, '') + '.txt', cur.title); } }, icon('share'), 'Compartir'),
+      h('button', { class: 'btn', onclick: async () => { try { await navigator.clipboard.writeText(await exportTxt().text()); toast('Copiado'); } catch { toast('No se pudo copiar'); } } }, icon('copy'), 'Copiar'),
+      h('span', { class: 'grow' }),
+      h('button', { class: 'btn sq dng', 'aria-label': 'Eliminar clase', onclick: () => confirmSheet('¿Eliminar esta clase?', 'Se borrarán todos sus apuntes.', 'Eliminar', () => { stop(); sessions = sessions.filter(s => s !== cur); cur = null; save(); home(); }) }, icon('trash')))));
+  renderAll();
+  if (autostart && SR) start();
+}
+addEventListener('pagehide', () => { if (cur) { cur.dur = base; save(); } });
+window.__apuntes = { isKey };
+home();
+</script>
+</body>
+</html>

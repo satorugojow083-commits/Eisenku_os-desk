@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07070b">
+<title>Mi Dinero · EISENKU</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="../_kit/kit.css">
+<style>
+:root{--ac:#3DFFA8;--on-ac:#03140c}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:25;display:flex;justify-content:center;gap:4px;padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:rgba(7,7,11,.9);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+.nav button{flex:0 1 120px;border:0;background:transparent;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px;border-radius:10px;font:10px var(--mono);letter-spacing:.1em;text-transform:uppercase}
+.nav button.on{color:var(--txt)}
+.nav button.on svg{color:var(--ac)}
+.fab{bottom:calc(84px + env(safe-area-inset-bottom))}
+.wrap{padding-bottom:calc(170px + env(safe-area-inset-bottom))}
+.month{display:flex;align-items:center;justify-content:center;gap:8px}
+.month b{min-width:170px;text-align:center;font-weight:600}
+.big{font:600 34px/1.1 var(--sans);letter-spacing:-.02em}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.kpis div{padding:10px 12px;border-radius:11px;background:rgba(255,255,255,.03)}
+.pos{color:var(--gr)}.neg{color:var(--rd)}
+.donut{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center}
+.donut svg{width:150px;height:150px}
+.legend{display:grid;gap:7px;font-size:14px}
+.legend div{display:flex;align-items:center;gap:8px}
+.legend span:nth-child(2){flex:1}
+.ins{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.45}
+.ins svg{color:var(--am);margin-top:1px}
+.day{margin-top:14px}
+.mv{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:11px;border:0;background:transparent;width:100%;text-align:left}
+.mv:hover{background:rgba(255,255,255,.04)}
+.mv .amt{font:500 15px var(--mono)}
+.goal .bar{margin:10px 0 6px;height:10px}
+.amtIn{font:600 34px var(--mono)!important;text-align:center;padding:14px!important}
+.cats{display:flex;flex-wrap:wrap;gap:6px}
+.bud{display:grid;gap:6px;margin-bottom:12px}
+.bud .bar i{transition:width .3s}
+@media(max-width:520px){.donut{grid-template-columns:1fr;justify-items:center}}
+</style>
+</head>
+<body>
+<header class="top"><h1><i></i>Mi Dinero</h1><button class="btn sm" id="install" hidden>Instalar</button></header>
+<main class="wrap" id="view"></main>
+<nav class="nav" id="nav"></nav>
+<script type="module">
+import { $, h, icon, store, toast, sheet, confirmSheet, download, boot, uid, money, clamp } from '../_kit/kit.js';
+boot();
+const S = store('dinero'), view = $('#view');
+const CATS = S.get('cats', [
+  { id: 'comida', n: 'Comida', c: '#FF8A5C' }, { id: 'transporte', n: 'Transporte', c: '#5CC8FF' }, { id: 'escuela', n: 'Escuela', c: '#B98CFF' },
+  { id: 'juegos', n: 'Juegos y apps', c: '#FF4FA3' }, { id: 'ropa', n: 'Ropa', c: '#FFC857' }, { id: 'salud', n: 'Salud', c: '#3DFFA8' },
+  { id: 'casa', n: 'Casa', c: '#8FA3BF' }, { id: 'otros', n: 'Otros', c: '#9895A6' }, { id: 'ingreso', n: 'Ingreso', c: '#3DFFA8' }]);
+let movs = S.get('movs', []), goals = S.get('goals', []), budgets = S.get('budgets', {});
+const save = () => { S.set('movs', movs); S.set('goals', goals); S.set('budgets', budgets); };
+const cat = id => CATS.find(c => c.id === id) || CATS.at(-2);
+const today = () => new Date().toISOString().slice(0, 10);
+const ym = d => d.slice(0, 7);
+let tab = 'res', month = today().slice(0, 7);
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const monthName = m => cap(new Date(m + '-15').toLocaleDateString('es-MX', { month: 'long', year: 'numeric' }));
+const shift = (m, n) => { const d = new Date(m + '-15'); d.setMonth(d.getMonth() + n); return d.toISOString().slice(0, 7); };
+const sum = (arr, t) => arr.filter(m => m.type === t).reduce((a, m) => a + m.amt, 0);
+
+/* ───────── navegación ───────── */
+const NAV = [['res', 'Resumen', 'chart'], ['movs', 'Movimientos', 'list'], ['metas', 'Metas', 'goal']];
+function renderNav() { $('#nav').replaceChildren(...NAV.map(([k, l, i]) => h('button', { class: tab === k ? 'on' : '', onclick: () => { tab = k; render(); } }, icon(i), l))); }
+function render() { renderNav(); ({ res, movs: list, metas })[tab](); scrollTo(0, 0); }
+const monthBar = () => h('div', { class: 'month' },
+  h('button', { class: 'ib', 'aria-label': 'Mes anterior', onclick: () => { month = shift(month, -1); render(); } }, icon('back')),
+  h('b', {}, monthName(month)),
+  h('button', { class: 'ib', 'aria-label': 'Mes siguiente', onclick: () => { month = shift(month, 1); render(); } }, icon('next')));
+
+/* ───────── resumen ───────── */
+function res() {
+  const ms = movs.filter(m => ym(m.date) === month), inc = sum(ms, 'i'), exp = sum(ms, 'g'), bal = inc - exp;
+  const byCat = {}; ms.filter(m => m.type === 'g').forEach(m => byCat[m.cat] = (byCat[m.cat] || 0) + m.amt);
+  const cats = Object.entries(byCat).sort((a, b) => b[1] - a[1]);
+  view.replaceChildren(h('div', { class: 'stack' }, monthBar(),
+    h('div', { class: 'card' }, h('div', { class: 'lbl' }, 'Saldo del mes'), h('div', { class: 'big ' + (bal < 0 ? 'neg' : '') }, money(bal)),
+      h('div', { class: 'kpis' }, h('div', {}, h('div', { class: 'lbl' }, 'Ingresos'), h('div', { class: 'pos mono' }, money(inc))), h('div', {}, h('div', { class: 'lbl' }, 'Gastos'), h('div', { class: 'mono' }, money(exp))))),
+    insights(ms, exp),
+    cats.length ? h('div', { class: 'card' }, h('div', { class: 'lbl', style: 'margin-bottom:12px' }, 'En qué se fue'), h('div', { class: 'donut' }, donut(cats, exp),
+      h('div', { class: 'legend' }, cats.map(([id, v]) => h('div', {}, h('span', { class: 'dot', style: `background:${cat(id).c}` }), h('span', {}, cat(id).n), h('span', { class: 'mono muted' }, Math.round(v / exp * 100) + '%'), h('span', { class: 'mono' }, money(v)))))))
+      : h('div', { class: 'card empty' }, h('b', {}, 'Sin gastos este mes'), 'Registra tu primer movimiento con el botón verde.'),
+    budgetCard(byCat)),
+    fab());
+}
+function donut(cats, total) {
+  const R = 60, C = 2 * Math.PI * R; let off = 0;
+  const NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', '0 0 150 150');
+  svg.innerHTML = `<circle cx="75" cy="75" r="${R}" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="18"/>` +
+    cats.map(([id, v]) => { const l = v / total * C, s = `<circle cx="75" cy="75" r="${R}" fill="none" stroke="${cat(id).c}" stroke-width="18" stroke-dasharray="${Math.max(0, l - 2)} ${C}" stroke-dashoffset="${-off}" transform="rotate(-90 75 75)"/>`; off += l; return s; }).join('') +
+    `<text x="75" y="72" text-anchor="middle" fill="#9895A6" font-size="10" font-family="ui-monospace,monospace" letter-spacing="1.5">GASTOS</text><text x="75" y="90" text-anchor="middle" fill="#ECEAF2" font-size="15" font-weight="600" font-family="system-ui">${money(total).replace('.00', '')}</text>`;
+  return svg;
+}
+function insights(ms, exp) {
+  const out = [], prev = movs.filter(m => ym(m.date) === shift(month, -1) && m.type === 'g');
+  const now = new Date(), isCur = month === today().slice(0, 7), days = isCur ? now.getDate() : new Date(+month.slice(0, 4), +month.slice(5), 0).getDate();
+  if (exp > 0) out.push(`Promedio de gasto diario: ${money(exp / days)}.`);
+  if (isCur && exp > 0) { const dim = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate(); out.push(`A este ritmo cerrarás el mes con unos ${money(exp / days * dim)} en gastos.`); }
+  const pc = {}; prev.forEach(m => pc[m.cat] = (pc[m.cat] || 0) + m.amt);
+  const cc = {}; ms.filter(m => m.type === 'g').forEach(m => cc[m.cat] = (cc[m.cat] || 0) + m.amt);
+  let worst = null; for (const [k, v] of Object.entries(cc)) if (pc[k] > 0) { const d = (v - pc[k]) / pc[k]; if (d > .2 && (!worst || d > worst.d)) worst = { k, d }; }
+  if (worst) out.push(`Llevas ${Math.round(worst.d * 100)}% más en ${cat(worst.k).n.toLowerCase()} que el mes pasado.`);
+  for (const [k, b] of Object.entries(budgets)) if (b > 0 && (cc[k] || 0) >= b * .8) out.push(`${cat(k).n}: llevas ${Math.round((cc[k] || 0) / b * 100)}% de tu presupuesto.`);
+  return out.length ? h('div', { class: 'card stack', style: 'gap:10px' }, out.map(t => h('div', { class: 'ins' }, icon('star'), h('span', {}, t)))) : null;
+}
+function budgetCard(byCat) {
+  const set = Object.entries(budgets).filter(([, v]) => v > 0);
+  return h('div', { class: 'card' }, h('div', { class: 'row', style: 'margin-bottom:12px' }, h('div', { class: 'lbl grow' }, 'Presupuestos del mes'), h('button', { class: 'btn sm', onclick: editBudgets }, icon('edit'), set.length ? 'Editar' : 'Definir')),
+    set.length ? set.map(([k, b]) => { const v = byCat[k] || 0, p = v / b, col = p >= 1 ? 'var(--rd)' : p >= .8 ? 'var(--am)' : cat(k).c;
+      return h('div', { class: 'bud' }, h('div', { class: 'row sm' }, h('span', { class: 'grow' }, cat(k).n), h('span', { class: 'mono ' + (p >= 1 ? 'neg' : 'muted') }, `${money(v)} / ${money(b)}`)), h('div', { class: 'bar' }, h('i', { style: `width:${clamp(p, 0, 1) * 100}%;background:${col}` })));
+    }) : h('p', { class: 'muted sm', style: 'margin:0' }, 'Pon un límite por categoría y te aviso cuando vayas en 80%.'));
+}
+function editBudgets() {
+  const ins = {};
+  const body = h('div', { class: 'stack' }, CATS.filter(c => c.id !== 'ingreso').map(c => h('label', { class: 'row nw' }, h('span', { class: 'dot', style: `background:${c.c}` }), h('span', { class: 'grow' }, c.n),
+    ins[c.id] = h('input', { type: 'number', inputmode: 'decimal', min: '0', placeholder: 'Sin límite', value: budgets[c.id] || '', style: 'width:140px' }))));
+  const close = sheet('Presupuesto mensual', body, [h('button', { class: 'btn pri', onclick: () => { for (const k in ins) { const v = +ins[k].value; if (v > 0) budgets[k] = v; else delete budgets[k]; } save(); close(); render(); } }, 'Guardar')]);
+}
+
+/* ───────── movimientos ───────── */
+function list() {
+  const ms = movs.filter(m => ym(m.date) === month).sort((a, b) => b.date.localeCompare(a.date) || b.t - a.t);
+  const days = {}; ms.forEach(m => (days[m.date] ||= []).push(m));
+  view.replaceChildren(h('div', { class: 'stack' }, monthBar(),
+    ms.length ? Object.entries(days).map(([d, arr]) => h('div', { class: 'day' },
+      h('div', { class: 'row lbl', style: 'padding:0 12px 6px' }, h('span', { class: 'grow' }, cap(new Date(d + 'T12:00').toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'short' }))), h('span', {}, money(sum(arr, 'i') - sum(arr, 'g')))),
+      arr.map(m => h('button', { class: 'mv', onclick: () => editMov(m) }, h('span', { class: 'dot', style: `background:${cat(m.cat).c};width:11px;height:11px` }),
+        h('div', { class: 'grow' }, h('div', {}, m.note || cat(m.cat).n), m.note ? h('div', { class: 'muted xs' }, cat(m.cat).n) : null),
+        h('span', { class: 'amt ' + (m.type === 'i' ? 'pos' : '') }, (m.type === 'i' ? '+' : '−') + money(m.amt))))))
+      : h('div', { class: 'card empty' }, 'Sin movimientos en este mes.'),
+    movs.length ? h('button', { class: 'btn', onclick: exportCSV }, icon('download'), 'Exportar todo (CSV)') : null), fab());
+}
+function exportCSV() {
+  const esc = s => `"${String(s).replace(/"/g, '""')}"`;
+  const rows = [['Fecha', 'Tipo', 'Categoría', 'Nota', 'Monto'], ...[...movs].sort((a, b) => a.date.localeCompare(b.date)).map(m => [m.date, m.type === 'i' ? 'Ingreso' : 'Gasto', cat(m.cat).n, m.note || '', (m.type === 'i' ? 1 : -1) * m.amt])];
+  download(new Blob(['﻿' + rows.map(r => r.map(esc).join(',')).join('\n')], { type: 'text/csv;charset=utf-8' }), 'mi-dinero.csv');
+}
+
+/* ───────── agregar / editar ───────── */
+const fab = () => h('button', { class: 'fab', onclick: () => editMov(null) }, icon('plus'), 'Movimiento');
+function editMov(m) {
+  const isNew = !m; m = m ? { ...m } : { id: uid(), type: 'g', amt: 0, cat: 'comida', note: '', date: today(), t: Date.now() };
+  const amt = h('input', { class: 'amtIn', type: 'number', inputmode: 'decimal', min: '0', step: '0.01', placeholder: '0.00', value: m.amt || '', 'aria-label': 'Monto' });
+  const cats = h('div', { class: 'cats' });
+  const drawCats = () => cats.replaceChildren(...CATS.filter(c => m.type === 'i' ? c.id === 'ingreso' || c.id === 'otros' : c.id !== 'ingreso').map(c => h('button', { class: 'chip' + (m.cat === c.id ? ' on' : ''), onclick: () => { m.cat = c.id; drawCats(); } }, h('span', { class: 'dot', style: `background:${c.c}` }), c.n)));
+  const seg = h('div', { class: 'seg' }, [['g', 'Gasto'], ['i', 'Ingreso']].map(([k, l]) => h('button', { class: m.type === k ? 'on' : '', onclick: e => { m.type = k; m.cat = k === 'i' ? 'ingreso' : 'comida'; [...seg.children].forEach(b => b.classList.toggle('on', b === e.currentTarget)); drawCats(); } }, l)));
+  const note = h('input', { value: m.note, placeholder: 'Nota (opcional)', maxlength: '60' }), date = h('input', { type: 'date', value: m.date });
+  drawCats();
+  const body = h('div', { class: 'stack' }, h('div', { style: 'text-align:center' }, seg), amt, h('div', { class: 'field' }, h('span', { class: 'lbl' }, 'Categoría'), cats), h('div', { class: 'row nw' }, h('div', { class: 'grow' }, note), h('div', { style: 'width:170px' }, date)));
+  const ok = () => {
+    const v = Math.round(+amt.value * 100) / 100; if (!(v > 0)) { amt.focus(); return toast('Escribe un monto'); }
+    Object.assign(m, { amt: v, note: note.value.trim(), date: date.value || today() });
+    movs = isNew ? [...movs, m] : movs.map(x => x.id === m.id ? m : x); save(); close(); month = ym(m.date); render(); toast(isNew ? 'Guardado' : 'Actualizado');
+  };
+  const close = sheet(isNew ? 'Nuevo movimiento' : 'Editar movimiento', body, [
+    !isNew ? h('button', { class: 'btn dng', onclick: () => { close(); confirmSheet('¿Eliminar movimiento?', `${money(m.amt)} · ${cat(m.cat).n}`, 'Eliminar', () => { movs = movs.filter(x => x.id !== m.id); save(); render(); }); } }, icon('trash')) : null,
+    h('span', { class: 'grow' }), h('button', { class: 'btn pri', onclick: ok }, icon('check'), 'Guardar')].filter(Boolean));
+  amt.addEventListener('keydown', e => { if (e.key === 'Enter') ok(); });
+  setTimeout(() => amt.focus(), 250);
+}
+
+/* ───────── metas ───────── */
+function pace() { // ahorro neto mensual promedio de los últimos 3 meses completos
+  const cur = today().slice(0, 7), ms = [1, 2, 3].map(n => shift(cur, -n)).filter(m => movs.some(x => ym(x.date) === m));
+  if (!ms.length) return null;
+  return ms.reduce((a, m) => { const arr = movs.filter(x => ym(x.date) === m); return a + sum(arr, 'i') - sum(arr, 'g'); }, 0) / ms.length;
+}
+function metas() {
+  const p = pace();
+  view.replaceChildren(h('div', { class: 'stack' },
+    goals.length ? goals.map(gl => {
+      const left = Math.max(0, gl.target - gl.saved), pr = gl.target ? gl.saved / gl.target : 0;
+      const eta = left <= 0 ? '¡Meta cumplida!' : p > 0 ? `A tu ritmo actual (${money(p)} al mes) la alcanzas en unos ${Math.ceil(left / p)} mes${Math.ceil(left / p) > 1 ? 'es' : ''}.` : `Ahorrando ${money(Math.ceil(left / 12))} por semana la logras en 3 meses.`;
+      return h('div', { class: 'card goal' }, h('div', { class: 'row' }, h('h3', { class: 'grow' }, gl.name), h('span', { class: 'mono sm' }, Math.round(pr * 100) + '%')),
+        h('div', { class: 'bar' }, h('i', { style: `width:${clamp(pr, 0, 1) * 100}%` })),
+        h('div', { class: 'row sm' }, h('span', { class: 'mono grow' }, `${money(gl.saved)} de ${money(gl.target)}`)),
+        h('p', { class: 'muted sm', style: 'margin:8px 0 12px' }, eta),
+        h('div', { class: 'row' }, h('button', { class: 'btn pri sm', onclick: () => abonar(gl) }, icon('plus'), 'Abonar'), h('button', { class: 'btn sm', onclick: () => editGoal(gl) }, icon('edit'), 'Editar')));
+    }) : h('div', { class: 'card empty' }, h('b', {}, 'Ponte una meta'), 'Una consola, un viaje, unos audífonos… te digo en cuánto tiempo llegas.'),
+    h('button', { class: 'btn', onclick: () => editGoal(null) }, icon('plus'), 'Nueva meta')));
+}
+function abonar(gl) {
+  const inp = h('input', { class: 'amtIn', type: 'number', inputmode: 'decimal', min: '0', placeholder: '0.00' });
+  const go = sign => { const v = +inp.value; if (!(v > 0)) return toast('Escribe un monto'); gl.saved = Math.max(0, Math.round((gl.saved + sign * v) * 100) / 100); save(); close(); render(); if (gl.saved >= gl.target) toast('¡Meta cumplida!'); };
+  const close = sheet(`Abonar a «${gl.name}»`, inp, [h('button', { class: 'btn', onclick: () => go(-1) }, 'Retirar'), h('button', { class: 'btn pri', onclick: () => go(1) }, 'Abonar')]);
+  setTimeout(() => inp.focus(), 250);
+}
+function editGoal(gl) {
+  const isNew = !gl; gl = gl || { id: uid(), name: '', target: 0, saved: 0 };
+  const name = h('input', { value: gl.name, placeholder: 'Ej. Audífonos' }), tgt = h('input', { type: 'number', inputmode: 'decimal', min: '0', value: gl.target || '', placeholder: 'Monto objetivo' });
+  const close = sheet(isNew ? 'Nueva meta' : 'Editar meta', h('div', { class: 'stack' }, h('label', { class: 'field' }, h('span', { class: 'lbl' }, 'Nombre'), name), h('label', { class: 'field' }, h('span', { class: 'lbl' }, 'Objetivo'), tgt)), [
+    !isNew ? h('button', { class: 'btn dng', onclick: () => { close(); confirmSheet('¿Eliminar meta?', gl.name, 'Eliminar', () => { goals = goals.filter(x => x !== gl); save(); render(); }); } }, icon('trash')) : null,
+    h('span', { class: 'grow' }),
+    h('button', { class: 'btn pri', onclick: () => { const t = +tgt.value; if (!name.value.trim() || !(t > 0)) return toast('Pon nombre y monto'); gl.name = name.value.trim(); gl.target = t; if (isNew) goals.push(gl); save(); close(); render(); } }, 'Guardar')].filter(Boolean));
+}
+render();
+</script>
+</body>
+</html>

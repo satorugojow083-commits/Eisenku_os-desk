@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07070b">
+<title>Escáner · EISENKU</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="../_kit/kit.css">
+<style>
+.docs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.doc{border:1px solid var(--line);background:var(--s1);border-radius:14px;padding:0;overflow:hidden;text-align:left}
+.doc img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;background:#111}
+.doc div{padding:10px 12px}
+.doc b{display:block;font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.full{position:fixed;inset:0;z-index:50;background:#000;display:flex;flex-direction:column}
+.full video{flex:1;min-height:0;width:100%;object-fit:contain;background:#000}
+.cbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 22px calc(16px + env(safe-area-inset-bottom));background:#07070b}
+.shutter{width:74px;height:74px;border-radius:50%;border:4px solid #fff;background:transparent;padding:5px}
+.shutter i{display:block;width:100%;height:100%;border-radius:50%;background:#fff;transition:transform .1s}
+.shutter:active i{transform:scale(.88)}
+.ctop{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;padding:calc(10px + env(safe-area-inset-top)) 12px;z-index:2}
+.ctop .ib{background:rgba(0,0,0,.45);color:#fff}
+.stage{flex:1;min-height:0;position:relative;display:grid;place-items:center;padding:24px;touch-action:none;overflow:hidden}
+.stage canvas{max-width:100%;max-height:100%;display:block}
+.stage svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hd{position:absolute;width:44px;height:44px;margin:-22px;border-radius:50%;border:2px solid var(--gr);background:rgba(61,255,168,.18);touch-action:none;cursor:grab}
+.hd::after{content:"";position:absolute;inset:17px;border-radius:50%;background:var(--gr)}
+.ebar{display:grid;gap:12px;padding:14px 16px calc(14px + env(safe-area-inset-bottom));background:#07070b;border-top:1px solid var(--line)}
+.pages{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+.pg{position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#111}
+.pg img{display:block;width:100%;aspect-ratio:3/4;object-fit:contain;background:#fff}
+.pg span{position:absolute;left:8px;bottom:8px;font:500 11px var(--mono);background:rgba(0,0,0,.7);padding:3px 7px;border-radius:6px}
+.pg .ib{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);color:#fff;width:34px;height:34px}
+.busy{position:fixed;inset:0;z-index:90;display:grid;place-items:center;background:rgba(0,0,0,.6);font:500 12px var(--mono);letter-spacing:.2em}
+</style>
+</head>
+<body>
+<header class="top">
+  <button class="ib" id="back" hidden aria-label="Atrás"></button>
+  <h1 id="ttl"><i></i>Escáner</h1>
+  <button class="btn sm" id="install" hidden>Instalar</button>
+</header>
+<main class="wrap" id="view"></main>
+<input type="file" id="pick" accept="image/*" multiple hidden>
+
+<script type="module">
+import { $, h, icon, idb, toast, sheet, confirmSheet, shareOrDownload, boot, clamp, uid } from '../_kit/kit.js';
+boot();
+const view = $('#view'), back = $('#back'), pick = $('#pick');
+back.append(icon('back'));
+let docs = [], cur = null; // cur = { id, name, pages: [Blob], isNew }
+
+/* ───────── datos ───────── */
+async function loadDocs() { docs = (await idb.get('scan:docs')) || []; }
+async function saveDocs() { await idb.set('scan:docs', docs); }
+const pagesOf = async id => (await idb.get('scan:p:' + id)) || [];
+async function thumb(blob) {
+  const bm = await createImageBitmap(blob), w = 240, hh = Math.round(w * bm.height / bm.width);
+  const c = h('canvas', { width: w, height: hh }); c.getContext('2d').drawImage(bm, 0, 0, w, hh); bm.close?.();
+  return c.toDataURL('image/jpeg', .7);
+}
+const busy = msg => { const b = h('div', { class: 'busy' }, msg); document.body.append(b); return () => b.remove(); };
+
+/* ───────── inicio ───────── */
+async function home() {
+  stopCam(); back.hidden = true; $('#ttl').lastChild.textContent = 'Escáner';
+  await loadDocs();
+  view.replaceChildren(
+    docs.length ? h('div', { class: 'docs' }, docs.map(d => h('button', { class: 'doc', onclick: () => openDoc(d.id) },
+      h('img', { src: d.thumb, alt: '' }), h('div', {}, h('b', {}, d.name), h('span', { class: 'muted xs' }, `${d.n} pág. · ${new Date(d.created).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}`)))))
+      : h('div', { class: 'empty' }, h('b', {}, 'Sin escaneos todavía'), 'Toma fotos de hojas y conviértelas en un PDF limpio y derecho.'),
+    h('button', { class: 'fab', onclick: () => startScan(null) }, icon('cam'), 'Escanear'));
+}
+
+/* ───────── cámara ───────── */
+let stream = null, camEl = null, torch = false;
+function stopCam() { stream?.getTracks().forEach(t => t.stop()); stream = null; camEl?.remove(); camEl = null; }
+async function startScan(doc) {
+  cur = doc ? { ...doc, pages: [], isNew: false } : { id: uid(), name: '', pages: [], isNew: true };
+  const vid = h('video', { playsinline: true, muted: true, autoplay: true });
+  const count = h('span', { class: 'lbl', style: 'color:#fff' });
+  const done = h('button', { class: 'btn pri', onclick: finish, disabled: true }, icon('check'), 'Terminar');
+  const torchB = h('button', { class: 'ib', 'aria-label': 'Linterna', hidden: true, onclick: async () => { torch = !torch; try { await stream.getVideoTracks()[0].applyConstraints({ advanced: [{ torch }] }); torchB.classList.toggle('on', torch); } catch {} } }, icon('flash'));
+  const upd = () => { count.textContent = cur.pages.length ? `${cur.pages.length} página${cur.pages.length > 1 ? 's' : ''}` : 'Apunta a la hoja'; done.disabled = !cur.pages.length; };
+  camEl = h('div', { class: 'full' },
+    h('div', { class: 'ctop' }, h('button', { class: 'ib', 'aria-label': 'Cerrar', onclick: () => { cur.pages.length ? confirmSheet('¿Descartar escaneo?', 'Las páginas que tomaste se perderán.', 'Descartar', () => (cur.isNew ? home() : openDoc(cur.id))) : (cur.isNew ? home() : openDoc(cur.id)); } }, icon('close')), torchB),
+    vid,
+    h('div', { class: 'cbar' },
+      h('button', { class: 'ib', style: 'color:#fff', 'aria-label': 'Importar fotos', onclick: () => pick.click() }, icon('image')),
+      h('button', { class: 'shutter', 'aria-label': 'Tomar foto', onclick: () => shoot(vid) }, h('i')),
+      h('div', { style: 'display:grid;justify-items:end;gap:6px' }, count, done)));
+  camEl.upd = upd; upd();
+  document.body.append(camEl);
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1440 } }, audio: false });
+    vid.srcObject = stream; await vid.play();
+    torchB.hidden = !stream.getVideoTracks()[0].getCapabilities?.().torch;
+  } catch { toast('Sin cámara: importa fotos con el botón de galería'); }
+}
+pick.addEventListener('change', async () => {
+  const files = [...pick.files]; pick.value = '';
+  for (const f of files) {
+    const bm = await createImageBitmap(f); const k = Math.min(1, 2400 / Math.max(bm.width, bm.height));
+    const c = h('canvas', { width: Math.round(bm.width * k), height: Math.round(bm.height * k) });
+    c.getContext('2d').drawImage(bm, 0, 0, c.width, c.height); bm.close?.();
+    await editPage(c);
+  }
+});
+function shoot(vid) {
+  if (!vid.videoWidth) return;
+  const c = h('canvas', { width: vid.videoWidth, height: vid.videoHeight });
+  c.getContext('2d').drawImage(vid, 0, 0); editPage(c);
+}
+
+/* ───────── edición: esquinas y filtro ───────── */
+function editPage(src) {
+  return new Promise(resolve => {
+    let q = detect(src) || inset(src), mode = 'mejorar';
+    const cv = h('canvas'); const stage = h('div', { class: 'stage' }, cv);
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); stage.append(svg);
+    const hds = [0, 1, 2, 3].map(i => { const d = h('div', { class: 'hd' }); stage.append(d); return d; });
+    const draw = () => { cv.width = src.width; cv.height = src.height; cv.getContext('2d').drawImage(src, 0, 0); requestAnimationFrame(place); };
+    const geo = () => { const r = cv.getBoundingClientRect(), s = stage.getBoundingClientRect(); return { k: r.width / src.width, ox: r.left - s.left, oy: r.top - s.top }; };
+    function place() {
+      const { k, ox, oy } = geo();
+      q.forEach((p, i) => { hds[i].style.left = ox + p.x * k + 'px'; hds[i].style.top = oy + p.y * k + 'px'; });
+      const pts = q.map(p => `${ox + p.x * k},${oy + p.y * k}`).join(' ');
+      svg.innerHTML = `<polygon points="${pts}" fill="rgba(61,255,168,.12)" stroke="#3DFFA8" stroke-width="2"/>`;
+    }
+    hds.forEach((d, i) => d.addEventListener('pointerdown', e => {
+      e.preventDefault(); d.setPointerCapture(e.pointerId);
+      const mv = ev => { const { k, ox, oy } = geo(), s = stage.getBoundingClientRect(); q[i] = { x: clamp((ev.clientX - s.left - ox) / k, 0, src.width), y: clamp((ev.clientY - s.top - oy) / k, 0, src.height) }; place(); };
+      const up = () => { d.removeEventListener('pointermove', mv); d.removeEventListener('pointerup', up); };
+      d.addEventListener('pointermove', mv); d.addEventListener('pointerup', up);
+    }));
+    const segs = [['mejorar', 'Mejorado'], ['bn', 'Blanco y negro'], ['gris', 'Gris'], ['orig', 'Original']];
+    const seg = h('div', { class: 'seg' }, segs.map(([m, l]) => h('button', { class: m === mode ? 'on' : '', onclick: e => { mode = m; [...seg.children].forEach(b => b.classList.toggle('on', b === e.currentTarget)); } }, l)));
+    const el = h('div', { class: 'full', style: 'z-index:60' }, stage,
+      h('div', { class: 'ebar' }, h('div', { class: 'row', style: 'justify-content:center' }, seg),
+        h('div', { class: 'row nw' },
+          h('button', { class: 'btn', onclick: () => { el.remove(); resolve(); } }, 'Repetir'),
+          h('button', { class: 'btn sq', 'aria-label': 'Girar', onclick: () => { src = rotate(src); q = detect(src) || inset(src); draw(); } }, icon('rotate')),
+          h('button', { class: 'btn sq', 'aria-label': 'Toda la foto', title: 'Toda la foto', onclick: () => { q = inset(src, 0); place(); } }, icon('full')),
+          h('span', { class: 'grow' }),
+          h('button', { class: 'btn pri', onclick: async () => {
+            const off = busy('PROCESANDO');
+            await new Promise(r => setTimeout(r, 30));
+            const out = warp(src, q); filter(out, mode);
+            const blob = await new Promise(r => out.toBlob(r, 'image/jpeg', .86));
+            off(); cur.pages.push(blob); camEl?.upd?.(); el.remove(); resolve();
+          } }, icon('check'), 'Usar página'))));
+    document.body.append(el); draw();
+    addEventListener('resize', place);
+  });
+}
+const inset = (c, f = .06) => [{ x: c.width * f, y: c.height * f }, { x: c.width * (1 - f), y: c.height * f }, { x: c.width * (1 - f), y: c.height * (1 - f) }, { x: c.width * f, y: c.height * (1 - f) }];
+function rotate(c) { const r = h('canvas', { width: c.height, height: c.width }), g = r.getContext('2d'); g.translate(r.width, 0); g.rotate(Math.PI / 2); g.drawImage(c, 0, 0); return r; }
+
+// Detecta la hoja: zona clara más grande (umbral de Otsu) y sus esquinas extremas.
+function detect(c) {
+  const k = 200 / Math.max(c.width, c.height), w = Math.round(c.width * k), hh = Math.round(c.height * k);
+  const t = h('canvas', { width: w, height: hh }), g = t.getContext('2d', { willReadFrequently: true });
+  g.drawImage(c, 0, 0, w, hh); const d = g.getImageData(0, 0, w, hh).data;
+  const gray = new Uint8Array(w * hh), hist = new Array(256).fill(0);
+  for (let i = 0; i < w * hh; i++) { const v = (d[i * 4] * 77 + d[i * 4 + 1] * 150 + d[i * 4 + 2] * 29) >> 8; gray[i] = v; hist[v]++; }
+  let sum = 0; for (let i = 0; i < 256; i++) sum += i * hist[i];
+  let sB = 0, wB = 0, best = 0, thr = 128; const N = w * hh;
+  for (let i = 0; i < 256; i++) { wB += hist[i]; if (!wB) continue; const wF = N - wB; if (!wF) break; sB += i * hist[i]; const mB = sB / wB, mF = (sum - sB) / wF, v = wB * wF * (mB - mF) ** 2; if (v > best) { best = v; thr = i; } }
+  let n = 0, tl = [1e9], br = [-1e9], tr = [-1e9], bl = [-1e9];
+  for (let y = 1; y < hh - 1; y++) for (let x = 1; x < w - 1; x++) {
+    const i = y * w + x;
+    if (gray[i] <= thr || gray[i - 1] <= thr || gray[i + 1] <= thr || gray[i - w] <= thr || gray[i + w] <= thr) continue;
+    n++; const s = x + y, df = x - y;
+    if (s < tl[0]) tl = [s, x, y]; if (s > br[0]) br = [s, x, y];
+    if (df > tr[0]) tr = [df, x, y]; if (-df > bl[0]) bl = [-df, x, y];
+  }
+  if (n < N * .08 || n > N * .97) return null;
+  const q = [tl, tr, br, bl].map(p => ({ x: p[1] / k, y: p[2] / k }));
+  const area = Math.abs(q.reduce((a, p, i) => { const o = q[(i + 1) % 4]; return a + p.x * o.y - o.x * p.y; }, 0)) / 2;
+  return area > c.width * c.height * .15 ? q : null;
+}
+
+// Corrige la perspectiva: homografía + interpolación bilineal.
+function solve(A, b) {
+  const n = b.length;
+  for (let i = 0; i < n; i++) {
+    let m = i; for (let r = i + 1; r < n; r++) if (Math.abs(A[r][i]) > Math.abs(A[m][i])) m = r;
+    [A[i], A[m]] = [A[m], A[i]]; [b[i], b[m]] = [b[m], b[i]];
+    for (let r = i + 1; r < n; r++) { const f = A[r][i] / A[i][i]; for (let c = i; c < n; c++) A[r][c] -= f * A[i][c]; b[r] -= f * b[i]; }
+  }
+  const x = new Array(n);
+  for (let i = n - 1; i >= 0; i--) { let s = b[i]; for (let c = i + 1; c < n; c++) s -= A[i][c] * x[c]; x[i] = s / A[i][i]; }
+  return x;
+}
+function warp(src, q) {
+  const D = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+  let W = Math.max(D(q[0], q[1]), D(q[3], q[2])), H = Math.max(D(q[0], q[3]), D(q[1], q[2]));
+  const k = Math.min(1, 1700 / Math.max(W, H)); W = Math.round(W * k); H = Math.round(H * k);
+  const dst = [[0, 0], [W, 0], [W, H], [0, H]], A = [], b = [];
+  dst.forEach(([u, v], i) => { const { x, y } = q[i]; A.push([u, v, 1, 0, 0, 0, -u * x, -v * x]); b.push(x); A.push([0, 0, 0, u, v, 1, -u * y, -v * y]); b.push(y); });
+  const m = solve(A, b);
+  const sw = src.width, sh = src.height, sd = src.getContext('2d').getImageData(0, 0, sw, sh).data;
+  const out = h('canvas', { width: W, height: H }), og = out.getContext('2d'), img = og.createImageData(W, H), od = img.data;
+  for (let v = 0, o = 0; v < H; v++) for (let u = 0; u < W; u++, o += 4) {
+    const z = m[6] * u + m[7] * v + 1, x = (m[0] * u + m[1] * v + m[2]) / z, y = (m[3] * u + m[4] * v + m[5]) / z;
+    const x0 = clamp(Math.floor(x), 0, sw - 2), y0 = clamp(Math.floor(y), 0, sh - 2), fx = clamp(x - x0, 0, 1), fy = clamp(y - y0, 0, 1);
+    const i00 = (y0 * sw + x0) * 4, i10 = i00 + 4, i01 = i00 + sw * 4, i11 = i01 + 4;
+    for (let c = 0; c < 3; c++) od[o + c] = (sd[i00 + c] * (1 - fx) + sd[i10 + c] * fx) * (1 - fy) + (sd[i01 + c] * (1 - fx) + sd[i11 + c] * fx) * fy;
+    od[o + 3] = 255;
+  }
+  og.putImageData(img, 0, 0); return out;
+}
+
+// Filtros de escaneo.
+function filter(c, mode) {
+  if (mode === 'orig') return;
+  const g = c.getContext('2d'), W = c.width, H = c.height, img = g.getImageData(0, 0, W, H), d = img.data, N = W * H;
+  if (mode === 'mejorar') {
+    const hist = new Uint32Array(256);
+    for (let i = 0; i < N; i++) hist[(d[i * 4] * 77 + d[i * 4 + 1] * 150 + d[i * 4 + 2] * 29) >> 8]++;
+    let acc = 0, lo = 0, hi = 255; for (let i = 0; i < 256; i++) { acc += hist[i]; if (acc < N * .015) lo = i; if (acc < N * .985) hi = i; }
+    hi = Math.max(hi, lo + 40); const s = 255 / (hi - lo);
+    for (let i = 0; i < N * 4; i += 4) for (let k = 0; k < 3; k++) { const v = (d[i + k] - lo) * s; d[i + k] = v < 0 ? 0 : v > 255 ? 255 : 255 * Math.pow(v / 255, .9); }
+  } else {
+    const gray = new Uint8ClampedArray(N);
+    for (let i = 0; i < N; i++) gray[i] = (d[i * 4] * 77 + d[i * 4 + 1] * 150 + d[i * 4 + 2] * 29) >> 8;
+    if (mode === 'bn') {
+      const S = Math.max(8, Math.round(W / 14)) >> 1, T = .14, ii = new Float64Array((W + 1) * (H + 1));
+      for (let y = 0; y < H; y++) { let row = 0; for (let x = 0; x < W; x++) { row += gray[y * W + x]; ii[(y + 1) * (W + 1) + x + 1] = ii[y * (W + 1) + x + 1] + row; } }
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+        const x1 = Math.max(0, x - S), x2 = Math.min(W, x + S + 1), y1 = Math.max(0, y - S), y2 = Math.min(H, y + S + 1);
+        const sum = ii[y2 * (W + 1) + x2] - ii[y1 * (W + 1) + x2] - ii[y2 * (W + 1) + x1] + ii[y1 * (W + 1) + x1];
+        gray[y * W + x] = gray[y * W + x] * (x2 - x1) * (y2 - y1) <= sum * (1 - T) ? 20 : 255;
+      }
+    }
+    for (let i = 0; i < N; i++) d[i * 4] = d[i * 4 + 1] = d[i * 4 + 2] = gray[i];
+  }
+  g.putImageData(img, 0, 0);
+}
+
+/* ───────── guardar ───────── */
+async function finish() {
+  stopCam();
+  if (!cur.isNew) {
+    const all = [...await pagesOf(cur.id), ...cur.pages];
+    await idb.set('scan:p:' + cur.id, all);
+    const d = docs.find(d => d.id === cur.id); d.n = all.length; await saveDocs();
+    toast(`${cur.pages.length} página${cur.pages.length > 1 ? 's' : ''} agregada${cur.pages.length > 1 ? 's' : ''}`); return openDoc(cur.id);
+  }
+  const def = 'Escaneo ' + new Date().toLocaleString('es-MX', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+  const inp = h('input', { value: def, 'aria-label': 'Nombre' });
+  const save = async () => {
+    close();
+    const d = { id: cur.id, name: inp.value.trim() || def, n: cur.pages.length, created: Date.now(), thumb: await thumb(cur.pages[0]) };
+    await idb.set('scan:p:' + d.id, cur.pages); docs.unshift(d); await saveDocs(); openDoc(d.id);
+  };
+  const close = sheet('Guardar documento', h('div', { class: 'field' }, h('span', { class: 'lbl' }, 'Nombre'), inp), [h('button', { class: 'btn pri', onclick: save }, 'Guardar')]);
+  inp.select();
+}
+
+/* ───────── documento ───────── */
+let urls = [];
+async function openDoc(id) {
+  stopCam(); await loadDocs();
+  const d = docs.find(x => x.id === id); if (!d) return home();
+  back.hidden = false; back.onclick = home; $('#ttl').lastChild.textContent = d.name;
+  urls.forEach(URL.revokeObjectURL); const pages = await pagesOf(id); urls = pages.map(p => URL.createObjectURL(p));
+  const delPage = i => confirmSheet('¿Eliminar página?', `Se borrará la página ${i + 1}.`, 'Eliminar', async () => {
+    pages.splice(i, 1);
+    if (!pages.length) { await idb.del('scan:p:' + id); docs = docs.filter(x => x.id !== id); await saveDocs(); return home(); }
+    await idb.set('scan:p:' + id, pages); d.n = pages.length; if (i === 0) d.thumb = await thumb(pages[0]); await saveDocs(); openDoc(id);
+  });
+  view.replaceChildren(h('div', { class: 'stack' },
+    h('div', { class: 'row' },
+      h('button', { class: 'btn pri', onclick: async () => { const off = busy('CREANDO PDF'); try { await shareOrDownload(await pdf(pages), safe(d.name) + '.pdf', d.name); } finally { off(); } } }, icon('file'), 'Exportar PDF'),
+      h('button', { class: 'btn', onclick: () => startScan(d) }, icon('plus'), 'Agregar páginas'),
+      h('span', { class: 'grow' }),
+      h('button', { class: 'btn sq', 'aria-label': 'Renombrar', onclick: () => rename(d) }, icon('edit')),
+      h('button', { class: 'btn sq dng', 'aria-label': 'Eliminar documento', onclick: () => confirmSheet('¿Eliminar documento?', `«${d.name}» y sus ${d.n} páginas se borrarán de este dispositivo.`, 'Eliminar', async () => { await idb.del('scan:p:' + id); docs = docs.filter(x => x.id !== id); await saveDocs(); home(); }) }, icon('trash'))),
+    h('div', { class: 'pages' }, urls.map((u, i) => h('div', { class: 'pg' }, h('img', { src: u, alt: `Página ${i + 1}` }), h('span', {}, i + 1),
+      h('button', { class: 'ib', 'aria-label': 'Eliminar página', onclick: () => delPage(i) }, icon('trash')))))));
+}
+const safe = s => s.replace(/[\\/:*?"<>|]+/g, '').trim() || 'documento';
+function rename(d) {
+  const inp = h('input', { value: d.name });
+  const close = sheet('Renombrar', inp, [h('button', { class: 'btn pri', onclick: async () => { d.name = inp.value.trim() || d.name; await saveDocs(); close(); openDoc(d.id); } }, 'Guardar')]);
+}
+
+// PDF mínimo: una imagen JPEG por página, a lo ancho de una hoja A4.
+async function pdf(blobs) {
+  const enc = new TextEncoder(), parts = [], offs = []; let len = 0;
+  const push = x => { const b = typeof x === 'string' ? enc.encode(x) : x; parts.push(b); len += b.length; };
+  const obj = (id, fn) => { offs[id] = len; push(`${id} 0 obj\n`); fn(); push('\nendobj\n'); };
+  push('%PDF-1.4\n%âãÏÓ\n');
+  const n = blobs.length;
+  obj(1, () => push('<< /Type /Catalog /Pages 2 0 R >>'));
+  obj(2, () => push(`<< /Type /Pages /Kids [${blobs.map((_, i) => `${3 + 3 * i} 0 R`).join(' ')}] /Count ${n} >>`));
+  for (let i = 0; i < n; i++) {
+    const bytes = new Uint8Array(await blobs[i].arrayBuffer()), bm = await createImageBitmap(blobs[i]);
+    const w = bm.width, hh = bm.height; bm.close?.();
+    const W = 595.28, H = +(W * hh / w).toFixed(2), p = 3 + 3 * i, cs = `q ${W} 0 0 ${H} 0 0 cm /Im${i} Do Q`;
+    obj(p, () => push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /XObject << /Im${i} ${p + 2} 0 R >> >> /Contents ${p + 1} 0 R >>`));
+    obj(p + 1, () => push(`<< /Length ${cs.length} >>\nstream\n${cs}\nendstream`));
+    obj(p + 2, () => { push(`<< /Type /XObject /Subtype /Image /Width ${w} /Height ${hh} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${bytes.length} >>\nstream\n`); push(bytes); push('\nendstream'); });
+  }
+  const total = 3 + 3 * n, xref = len;
+  push(`xref\n0 ${total}\n0000000000 65535 f \n`);
+  for (let i = 1; i < total; i++) push(String(offs[i]).padStart(10, '0') + ' 00000 n \n');
+  push(`trailer\n<< /Size ${total} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`);
+  return new Blob(parts, { type: 'application/pdf' });
+}
+window.__scan = { pdf, warp, detect, filter };
+home();
+</script>
+</body>
+</html>

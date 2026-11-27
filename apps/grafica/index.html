@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#07070b">
+<title>Graficadora · EISENKU</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="../_kit/kit.css">
+<style>
+:root{--ac:#5CC8FF;--on-ac:#03111a}
+html,body{height:100%;overflow:hidden}
+.app{position:fixed;inset:58px 0 0;display:grid;grid-template-columns:360px 1fr}
+.side{border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;background:rgba(10,10,16,.6)}
+.tabs{display:flex;gap:2px;padding:10px 12px 0}
+.tabs button{flex:1;border:0;background:transparent;padding:9px 6px;border-bottom:2px solid transparent;color:var(--mut);font-size:13px}
+.tabs button.on{color:var(--txt);border-color:var(--ac)}
+.pane{flex:1;min-height:0;overflow:auto;padding:12px}
+.fn{display:grid;grid-template-columns:30px 1fr 34px;gap:6px;align-items:center;margin-bottom:8px}
+.fn .sw{width:26px;height:26px;border-radius:8px;border:2px solid;background:transparent;padding:0}
+.fn .sw.on{background:currentColor}
+.fn .in{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:11px;background:rgba(0,0,0,.3);padding:0 10px}
+.fn .in span{font:500 13px var(--mono);color:var(--mut)}
+.fn input{border:0!important;background:transparent!important;padding:10px 0!important;font:15px var(--mono)}
+.fn .err{grid-column:2;color:var(--rd);font-size:12px;margin:-4px 0 4px}
+.keys{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+.keys button{height:38px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.04);font:14px var(--mono)}
+.plot{position:relative;min-width:0;min-height:0;touch-action:none}
+.plot canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:crosshair}
+.tip{position:absolute;pointer-events:none;padding:6px 9px;border-radius:8px;background:rgba(15,15,23,.94);border:1px solid var(--line);font:12px var(--mono);white-space:nowrap;transform:translate(10px,-120%)}
+.pbtn{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:6px}
+.pbtn .btn{background:rgba(15,15,23,.85)}
+table{width:100%;border-collapse:collapse;font:13px var(--mono)}
+th,td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-weight:500;position:sticky;top:0;background:#0d0d14}
+.kp{display:flex;justify-content:space-between;gap:8px;padding:9px 10px;border-radius:9px;border:1px solid var(--line);margin-bottom:6px;font:13px var(--mono);width:100%;background:transparent;text-align:left}
+.kp:hover{border-color:var(--ac)}
+@media (max-width:760px){.app{grid-template-columns:1fr;grid-template-rows:55% 45%}.side{order:2;border-right:0;border-top:1px solid var(--line)}.keys{grid-template-columns:repeat(9,1fr)}}
+</style>
+</head>
+<body>
+<header class="top"><h1><i></i>Graficadora</h1><button class="btn sm" id="install" hidden>Instalar</button></header>
+<div class="app">
+  <aside class="side">
+    <div class="tabs" id="tabs"></div>
+    <div class="pane" id="pane"></div>
+    <div class="keys" id="keys"></div>
+  </aside>
+  <div class="plot" id="plot"><canvas id="cv"></canvas><div class="tip" id="tip" hidden></div><div class="pbtn" id="pbtn"></div></div>
+</div>
+<script type="module">
+import { $, h, icon, store, toast, boot, uid, clamp } from '../_kit/kit.js';
+boot();
+const S = store('grafica');
+const COLORS = ['#FF4FA3', '#3DFFA8', '#5CC8FF', '#FFC857', '#B98CFF', '#FF8A5C'];
+let fns = S.get('fns', [{ id: uid(), src: 'x^2 - 2', color: COLORS[0], on: true }, { id: uid(), src: 'sen(x)', color: COLORS[1], on: true }]);
+let V = S.get('view', { cx: 0, cy: 0, sc: 60 }); // sc = píxeles por unidad
+let tab = 'fn', focused = null;
+const save = () => { S.set('fns', fns.map(({ f, err, ...r }) => r)); S.set('view', V); };
+
+/* ───────── intérprete de expresiones (seguro: solo genera Math.*) ───────── */
+const FUN = { sin: 'Math.sin', sen: 'Math.sin', cos: 'Math.cos', tan: 'Math.tan', tg: 'Math.tan', asin: 'Math.asin', acos: 'Math.acos', atan: 'Math.atan', arcsen: 'Math.asin', arccos: 'Math.acos', arctan: 'Math.atan', sqrt: 'Math.sqrt', raiz: 'Math.sqrt', abs: 'Math.abs', ln: 'Math.log', log: 'Math.log10', exp: 'Math.exp', floor: 'Math.floor', ceil: 'Math.ceil', round: 'Math.round', sign: 'Math.sign', sinh: 'Math.sinh', cosh: 'Math.cosh', tanh: 'Math.tanh' };
+const CONST = { pi: 'Math.PI', 'π': 'Math.PI', e: 'Math.E', x: 'x' };
+const NAMES = [...Object.keys(FUN), ...Object.keys(CONST)].sort((a, b) => b.length - a.length);
+function tokenize(s) {
+  s = s.replace(/^\s*(y|f\s*\(\s*x\s*\))\s*=\s*/i, '').replace(/·|×/g, '*').replace(/÷/g, '/').replace(/,/g, '.').toLowerCase();
+  const out = []; let i = 0;
+  while (i < s.length) {
+    const c = s[i];
+    if (/\s/.test(c)) { i++; continue; }
+    const num = s.slice(i).match(/^(\d+\.?\d*|\.\d+)/);
+    if (num) { out.push({ t: 'n', v: num[0] }); i += num[0].length; continue; }
+    if (/[a-zπáéíóú]/.test(c)) {
+      let w = s.slice(i).match(/^[a-zπáéíóú]+/)[0].normalize('NFD').replace(/[̀-ͯ]/g, ''); i += s.slice(i).match(/^[a-zπáéíóú]+/)[0].length;
+      while (w) { const n = NAMES.find(n => w.startsWith(n)); if (!n) throw `No reconozco «${w}»`; out.push(FUN[n] ? { t: 'f', v: FUN[n] } : { t: 'c', v: CONST[n] }); w = w.slice(n.length); }
+      continue;
+    }
+    if ('+-*/^()|√'.includes(c)) { out.push({ t: c }); i++; continue; }
+    throw `Símbolo no válido «${c}»`;
+  }
+  return out;
+}
+function compile(src) {
+  const T = tokenize(src); let p = 0;
+  if (!T.length) throw 'Escribe una función';
+  const peek = () => T[p], eat = t => { if (T[p]?.t !== t) throw t === ')' ? 'Falta cerrar un paréntesis' : 'Expresión incompleta'; p++; };
+  const starts = k => k && (k.t === 'n' || k.t === 'c' || k.t === 'f' || k.t === '(' || k.t === '√' || k.t === '|');
+  function expr() { let a = term(); while (peek()?.t === '+' || peek()?.t === '-') { const o = T[p++].t; a = `(${a}${o}${term()})`; } return a; }
+  function term() {
+    let a = unary();
+    for (;;) {
+      const k = peek();
+      if (k?.t === '*' || k?.t === '/') { p++; a = `(${a}${k.t}${unary()})`; }
+      else if (starts(k) && !(k.t === '|' && inAbs)) a = `(${a}*${power()})`;
+      else return a;
+    }
+  }
+  function unary() { if (peek()?.t === '-') { p++; return `(-${unary()})`; } if (peek()?.t === '+') { p++; return unary(); } return power(); }
+  function power() { const b = primary(); if (peek()?.t === '^') { p++; return `Math.pow(${b},${unary()})`; } return b; }
+  let inAbs = 0;
+  function primary() {
+    const k = T[p++]; if (!k) throw 'Expresión incompleta';
+    if (k.t === 'n') return k.v;
+    if (k.t === 'c') return k.v;
+    if (k.t === 'f') return `${k.v}(${peek()?.t === '(' ? (p++, inner()) : power()})`;
+    if (k.t === '√') return `Math.sqrt(${peek()?.t === '(' ? (p++, inner()) : power()})`;
+    if (k.t === '(') return `(${inner()})`;
+    if (k.t === '|') { inAbs++; const e = expr(); inAbs--; eat('|'); return `Math.abs(${e})`; }
+    throw 'Expresión incompleta';
+  }
+  function inner() { const e = expr(); eat(')'); return e; }
+  const js = expr(); if (p < T.length) throw 'Revisa la expresión';
+  const f = new Function('x', `"use strict";return ${js};`); f(1); return f;
+}
+fns.forEach(fn => { try { fn.f = compile(fn.src); } catch (e) { fn.err = String(e); } });
+
+/* ───────── dibujo ───────── */
+const cv = $('#cv'), plot = $('#plot'), g = cv.getContext('2d'), tip = $('#tip');
+let W = 0, H = 0, dpr = 1, trace = null, keyPts = [];
+const toPx = (x, y) => [W / 2 + (x - V.cx) * V.sc, H / 2 - (y - V.cy) * V.sc];
+const toX = px => V.cx + (px - W / 2) / V.sc, toY = py => V.cy - (py - H / 2) / V.sc;
+function niceStep(px) { const raw = px / V.sc, p10 = 10 ** Math.floor(Math.log10(raw)), m = raw / p10; return (m < 2 ? 2 : m < 5 ? 5 : 10) * p10; }
+const fmtN = v => { if (Math.abs(v) < 1e-10) return '0'; const a = Math.abs(v); return a >= 1e5 || a < 1e-3 ? v.toExponential(2) : (+v.toFixed(4)).toString(); };
+let pending = false;
+function draw() { if (!pending) { pending = true; requestAnimationFrame(() => { pending = false; paint(); }); } }
+function paint() {
+  dpr = Math.min(2, devicePixelRatio || 1); W = plot.clientWidth; H = plot.clientHeight;
+  if (cv.width !== W * dpr || cv.height !== H * dpr) { cv.width = W * dpr; cv.height = H * dpr; }
+  g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
+  const st = niceStep(80), x0 = toX(0), x1 = toX(W), y0 = toY(H), y1 = toY(0);
+  g.lineWidth = 1;
+  for (const [k, a] of [[st / 5, .035], [st, .09]]) {
+    g.strokeStyle = `rgba(255,255,255,${a})`; g.beginPath();
+    for (let x = Math.ceil(x0 / k) * k; x <= x1; x += k) { const [px] = toPx(x, 0); g.moveTo(Math.round(px) + .5, 0); g.lineTo(Math.round(px) + .5, H); }
+    for (let y = Math.ceil(y0 / k) * k; y <= y1; y += k) { const [, py] = toPx(0, y); g.moveTo(0, Math.round(py) + .5); g.lineTo(W, Math.round(py) + .5); }
+    g.stroke();
+  }
+  const [ax, ay] = toPx(0, 0);
+  g.strokeStyle = 'rgba(255,255,255,.45)'; g.lineWidth = 1.3; g.beginPath(); g.moveTo(0, ay); g.lineTo(W, ay); g.moveTo(ax, 0); g.lineTo(ax, H); g.stroke();
+  g.fillStyle = 'rgba(236,234,242,.6)'; g.font = '11px ui-monospace,monospace';
+  const ly = clamp(ay + 14, 14, H - 6), lx = clamp(ax - 6, 30, W - 6);
+  g.textAlign = 'center'; for (let x = Math.ceil(x0 / st) * st; x <= x1; x += st) if (Math.abs(x) > st / 2) g.fillText(fmtN(x), toPx(x, 0)[0], ly);
+  g.textAlign = 'right'; for (let y = Math.ceil(y0 / st) * st; y <= y1; y += st) if (Math.abs(y) > st / 2) g.fillText(fmtN(y), lx, toPx(0, y)[1] + 4);
+  for (const fn of fns) {
+    if (!fn.on || !fn.f) continue;
+    g.strokeStyle = fn.color; g.lineWidth = 2.4; g.lineJoin = 'round'; g.beginPath();
+    let pen = false, prev = null;
+    for (let px = 0; px <= W; px += .5) {
+      let y; try { y = fn.f(toX(px)); } catch { y = NaN; }
+      const py = H / 2 - (y - V.cy) * V.sc;
+      if (!isFinite(py) || Math.abs(py) > H * 6) { pen = false; prev = null; continue; }
+      if (pen && prev !== null && Math.abs(py - prev) > H * 1.5) pen = false;
+      pen ? g.lineTo(px, py) : g.moveTo(px, py); pen = true; prev = py;
+    }
+    g.stroke();
+  }
+  for (const k of keyPts) { const [px, py] = toPx(k.x, k.y); g.fillStyle = '#07070b'; g.strokeStyle = k.color; g.lineWidth = 2; g.beginPath(); g.arc(px, py, 4.5, 0, Math.PI * 2); g.fill(); g.stroke(); }
+  if (trace) {
+    const [px, py] = toPx(trace.x, trace.y);
+    g.strokeStyle = 'rgba(255,255,255,.25)'; g.setLineDash([4, 4]); g.beginPath(); g.moveTo(px, 0); g.lineTo(px, H); g.stroke(); g.setLineDash([]);
+    g.fillStyle = trace.color; g.beginPath(); g.arc(px, py, 6, 0, Math.PI * 2); g.fill();
+    tip.hidden = false; tip.style.left = px + 'px'; tip.style.top = py + 'px'; tip.textContent = `(${fmtN(trace.x)}, ${fmtN(trace.y)})`;
+  } else tip.hidden = true;
+}
+new ResizeObserver(draw).observe(plot);
+
+/* ───────── gestos: arrastrar, pellizcar, tocar para rastrear ───────── */
+const ptr = new Map(); let gest = null;
+cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); ptr.set(e.pointerId, { x: e.offsetX, y: e.offsetY }); gest = { moved: false, v: { ...V }, pts: new Map([...ptr].map(([k, v]) => [k, { ...v }])) }; });
+cv.addEventListener('pointermove', e => {
+  if (!ptr.has(e.pointerId)) return; ptr.set(e.pointerId, { x: e.offsetX, y: e.offsetY });
+  const P = [...ptr.values()], P0 = [...gest.pts.values()];
+  if (P.length === 1 && P0.length === 1) {
+    const dx = P[0].x - P0[0].x, dy = P[0].y - P0[0].y; if (Math.hypot(dx, dy) > 5) gest.moved = true;
+    if (gest.moved) { V.cx = gest.v.cx - dx / V.sc; V.cy = gest.v.cy + dy / V.sc; trace = null; draw(); }
+  } else if (P.length >= 2 && P0.length >= 2) {
+    gest.moved = true;
+    const d0 = Math.hypot(P0[0].x - P0[1].x, P0[0].y - P0[1].y), d1 = Math.hypot(P[0].x - P[1].x, P[0].y - P[1].y);
+    const m0 = { x: (P0[0].x + P0[1].x) / 2, y: (P0[0].y + P0[1].y) / 2 }, m1 = { x: (P[0].x + P[1].x) / 2, y: (P[0].y + P[1].y) / 2 };
+    const sc = clamp(gest.v.sc * d1 / d0, 2, 5e5);
+    const wx = gest.v.cx + (m0.x - W / 2) / gest.v.sc, wy = gest.v.cy - (m0.y - H / 2) / gest.v.sc;
+    V.sc = sc; V.cx = wx - (m1.x - W / 2) / sc; V.cy = wy + (m1.y - H / 2) / sc; trace = null; draw();
+  }
+});
+const up = e => {
+  if (!ptr.has(e.pointerId)) return;
+  if (gest && !gest.moved && ptr.size === 1) pickTrace(e.offsetX, e.offsetY);
+  ptr.delete(e.pointerId); gest = { moved: true, v: { ...V }, pts: new Map([...ptr].map(([k, v]) => [k, { ...v }])) }; save();
+};
+cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+cv.addEventListener('wheel', e => { e.preventDefault(); zoomAt(e.offsetX, e.offsetY, Math.exp(-e.deltaY * .0015)); }, { passive: false });
+function zoomAt(px, py, f) { const wx = toX(px), wy = toY(py); V.sc = clamp(V.sc * f, 2, 5e5); V.cx = wx - (px - W / 2) / V.sc; V.cy = wy + (py - H / 2) / V.sc; draw(); save(); }
+function pickTrace(px, py) {
+  const x = toX(px); let best = null;
+  for (const fn of fns) { if (!fn.on || !fn.f) continue; let y; try { y = fn.f(x); } catch { continue; } if (!isFinite(y)) continue; const d = Math.abs(toPx(x, y)[1] - py); if (d < 40 && (!best || d < best.d)) best = { x, y, d, color: fn.color }; }
+  trace = best; draw();
+}
+$('#pbtn').append(
+  h('button', { class: 'btn sm sq', 'aria-label': 'Acercar', onclick: () => zoomAt(W / 2, H / 2, 1.5) }, icon('plus')),
+  h('button', { class: 'btn sm sq', 'aria-label': 'Alejar', onclick: () => zoomAt(W / 2, H / 2, 1 / 1.5) }, icon('minus')),
+  h('button', { class: 'btn sm sq', 'aria-label': 'Centrar', onclick: () => { V = { cx: 0, cy: 0, sc: 60 }; trace = null; draw(); save(); } }, icon('target')));
+
+/* ───────── puntos clave: raíces, extremos, cortes ───────── */
+function analyze() {
+  const pts = [], a = toX(0), b = toX(W), N = 800, dx = (b - a) / N;
+  const refine = (f, lo, hi) => { let flo = f(lo); for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2, fm = f(m); if (Math.sign(fm) === Math.sign(flo)) { lo = m; flo = fm; } else hi = m; } return (lo + hi) / 2; };
+  const live = fns.filter(f => f.on && f.f);
+  for (const fn of live) {
+    const f = x => { try { return fn.f(x); } catch { return NaN; } };
+    const y0 = f(0); if (isFinite(y0) && 0 >= a && 0 <= b) pts.push({ k: 'Corte con eje y', x: 0, y: y0, color: fn.color, fn });
+    const dv = x => (f(x + dx / 2) - f(x - dx / 2)) / dx;
+    let px = a, py = f(a), pd = dv(a);
+    for (let i = 1; i <= N; i++) {
+      const x = a + i * dx, y = f(x), d = dv(x);
+      if (isFinite(y) && isFinite(py) && Math.sign(y) !== Math.sign(py) && Math.abs(y - py) < (Math.abs(y) + Math.abs(py)) * 50 + 1e-9 && Math.abs(y - py) < (H / V.sc)) {
+        const r = refine(f, px, x); if (Math.abs(f(r)) < 1e-6 * Math.max(1, H / V.sc)) pts.push({ k: 'Raíz', x: r, y: 0, color: fn.color, fn });
+      }
+      if (isFinite(d) && isFinite(pd) && Math.sign(d) !== Math.sign(pd) && Math.abs(d - pd) < 1e3) {
+        const r = refine(t => (f(t + 1e-6) - f(t - 1e-6)), px, x), yr = f(r);
+        if (isFinite(yr)) pts.push({ k: pd > 0 ? 'Máximo' : 'Mínimo', x: r, y: yr, color: fn.color, fn });
+      }
+      px = x; py = y; pd = d;
+    }
+  }
+  for (let i = 0; i < live.length; i++) for (let j = i + 1; j < live.length; j++) {
+    const f = x => { try { return live[i].f(x) - live[j].f(x); } catch { return NaN; } };
+    let px = a, py = f(a);
+    for (let k = 1; k <= N; k++) { const x = a + k * dx, y = f(x); if (isFinite(y) && isFinite(py) && Math.sign(y) !== Math.sign(py) && Math.abs(y - py) < H / V.sc) { const r = refine(f, px, x); pts.push({ k: 'Intersección', x: r, y: live[i].f(r), color: '#ECEAF2', fn: null }); } px = x; py = y; }
+  }
+  const seen = new Set(), tol = (b - a) / 2000;
+  return pts.filter(p => { const k = p.k + '|' + (p.fn?.id || '') + '|' + Math.round(p.x / tol); if (seen.has(k)) return false; seen.add(k); return true; });
+}
+
+/* ───────── panel ───────── */
+const tabs = $('#tabs'), pane = $('#pane');
+const TABS = [['fn', 'Funciones'], ['key', 'Puntos clave'], ['tbl', 'Tabla']];
+function renderTabs() { tabs.replaceChildren(...TABS.map(([k, l]) => h('button', { class: tab === k ? 'on' : '', onclick: () => { tab = k; renderTabs(); renderPane(); } }, l))); $('#keys').hidden = tab !== 'fn'; }
+function renderPane() {
+  keyPts = [];
+  if (tab === 'fn') {
+    pane.replaceChildren(...fns.map(fn => {
+      const err = h('div', { class: 'err', hidden: !fn.err }, fn.err || '');
+      const inp = h('input', { value: fn.src, spellcheck: 'false', autocomplete: 'off', autocapitalize: 'off', 'aria-label': 'Función', onfocus: e => focused = e.target,
+        oninput: e => { fn.src = e.target.value; try { fn.f = compile(fn.src); fn.err = ''; } catch (x) { fn.f = null; fn.err = String(x); } err.hidden = !fn.err || !fn.src.trim(); err.textContent = fn.err; save(); draw(); } });
+      inp._fn = fn;
+      const sw = h('button', { class: 'sw' + (fn.on ? ' on' : ''), style: `color:${fn.color}`, 'aria-label': 'Mostrar u ocultar', onclick: e => { fn.on = !fn.on; e.currentTarget.classList.toggle('on', fn.on); save(); draw(); } });
+      return h('div', { class: 'fn' }, sw, h('div', { class: 'in' }, h('span', {}, 'y ='), inp),
+        h('button', { class: 'ib', 'aria-label': 'Quitar', onclick: () => { fns = fns.filter(x => x !== fn); save(); renderPane(); draw(); } }, icon('trash')), err);
+    }), h('button', { class: 'btn', style: 'width:100%', onclick: () => { const fn = { id: uid(), src: '', color: COLORS[fns.length % COLORS.length], on: true }; fns.push(fn); renderPane(); pane.querySelector('.fn:last-of-type input')?.focus(); } }, icon('plus'), 'Agregar función'),
+      h('p', { class: 'muted xs' }, 'Ejemplos: 2x+1 · x^3-3x · sen(x)/x · √(x+4) · |x-2| · e^(-x^2) · ln(x)'));
+  } else if (tab === 'key') {
+    const pts = analyze(); keyPts = pts;
+    pane.replaceChildren(pts.length ? h('div', {}, h('p', { class: 'muted xs', style: 'margin-top:0' }, 'En la zona visible. Toca uno para centrarlo.'),
+      pts.map(k => h('button', { class: 'kp', onclick: () => { V.cx = k.x; V.cy = k.y; trace = { x: k.x, y: k.y, color: k.color }; draw(); save(); } },
+        h('span', { style: `color:${k.color}` }, k.k), h('span', {}, `(${fmtN(k.x)}, ${fmtN(k.y)})`))))
+      : h('div', { class: 'empty' }, 'No hay raíces, extremos ni cortes en la zona visible.'));
+  } else {
+    const live = fns.filter(f => f.on && f.f);
+    let x0 = Math.round(toX(W * .25)), stp = 1;
+    const start = h('input', { type: 'number', value: x0, step: 'any', oninput: () => fill() }), step = h('input', { type: 'number', value: stp, step: 'any', min: '0', oninput: () => fill() });
+    const tbody = h('tbody');
+    const fill = () => { const a = +start.value || 0, s = +step.value || 1; tbody.replaceChildren(...Array.from({ length: 21 }, (_, i) => { const x = a + i * s; return h('tr', {}, h('td', {}, fmtN(x)), live.map(fn => { let y; try { y = fn.f(x); } catch { y = NaN; } return h('td', { style: `color:${fn.color}` }, isFinite(y) ? fmtN(y) : '—'); })); })); };
+    pane.replaceChildren(h('div', { class: 'row nw', style: 'margin-bottom:10px' }, h('label', { class: 'field grow' }, h('span', { class: 'lbl' }, 'Desde x ='), start), h('label', { class: 'field grow' }, h('span', { class: 'lbl' }, 'Paso'), step)),
+      live.length ? h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'x'), live.map((fn, i) => h('th', { style: `color:${fn.color}` }, `y${i + 1}`)))), tbody) : h('div', { class: 'empty' }, 'Agrega una función.'));
+    fill();
+  }
+  draw();
+}
+const KEYS = ['x', '^', '√(', '(', ')', '|', 'π', 'sen(', 'cos(', 'tan(', 'ln(', 'e^('];
+$('#keys').append(...KEYS.map(k => h('button', { onpointerdown: e => e.preventDefault(), onclick: () => {
+  const inp = focused && document.body.contains(focused) ? focused : pane.querySelector('.fn input'); if (!inp) return;
+  const a = inp.selectionStart ?? inp.value.length, b = inp.selectionEnd ?? a;
+  inp.value = inp.value.slice(0, a) + k + inp.value.slice(b); inp.focus(); inp.setSelectionRange(a + k.length, a + k.length); inp.dispatchEvent(new Event('input'));
+} }, k.replace('(', '') || k)));
+let anaT; const reAnalyze = () => { if (tab === 'key') { clearTimeout(anaT); anaT = setTimeout(renderPane, 250); } };
+cv.addEventListener('pointerup', reAnalyze); cv.addEventListener('wheel', reAnalyze);
+window.__graf = { compile, analyze };
+renderTabs(); renderPane();
+</script>
+</body>
+</html>

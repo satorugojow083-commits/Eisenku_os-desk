@@ -1,0 +1,33 @@
+{
+  "name": "Escáner EISENKU",
+  "short_name": "Escáner",
+  "description": "Documentos a PDF con corrección de perspectiva.",
+  "lang": "es-MX",
+  "start_url": "./",
+  "scope": "./",
+  "id": "./?app=escaner",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#07070b",
+  "theme_color": "#07070b",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
